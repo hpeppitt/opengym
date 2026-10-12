@@ -121,9 +121,15 @@ pick an exercise for a row, and the saved routine uses it.
 ## Phase 2: Health Connect stats
 
 ### OG-020 `HealthReadPlugin.java` with read permissions
-status: ready
+status: building
 Aggregate Steps, TotalCaloriesBurned, Nutrition; raw SleepSession, RestingHeartRate, HeartRate,
 ExerciseSession. Manifest `READ_*` permissions. Gate: values on device match Health Connect's own.
+Built: `HealthReadPlugin.java` (registered in upstream's MainActivity by one line, seven READ
+permissions in its manifest) and `lib/health-read.js` (sleep per night, VO2 inputs from cardio
+sessions only, `readStats()`). Verified on the phone 2026-10-12 over the WebView debugger: all
+seven permissions granted through the app's own dialog; daily steps and calories, sleep with
+stages, resting heart rate and exercise sessions with per-session peak heart rate all read,
+every record from Fitbit. Remaining: Harry compares the numbers with Health Connect's own.
 
 ### OG-021 Pure scorers: `lib/sleep-score.js`, `lib/vo2max.js`
 status: done
