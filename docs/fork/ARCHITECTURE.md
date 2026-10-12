@@ -43,6 +43,13 @@ photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from sec
   fit-app's `workoutImageImport.ts`, which put its 80-entry library in the prompt.
 - Match states and the confirmation step are fit-app's FIT-120 design, carried over.
 - Output is an ordinary routine so the upstream workout flow, progression and 1RM all apply.
+- The Gemini key (OG-010) lives in `lib/gemini-key.js`, slot `anatoly.geminiKey`, stored through
+  upstream's `secureGet`/`secureSet` in `lib/coach-secrets.js`. Its Settings row is
+  `components/fork/GeminiKeyRow.jsx`, hooked into upstream's Settings by an import and one line
+  under Data & backup, Bring data in. Shown on phone builds only.
+- Fork UI strings sit in a marked block right after each locale file's opening line, where
+  upstream rarely edits. pt-BR repeats every fork string as an explicit override, even where it
+  matches pt, so upstream's pinned inheritance fingerprint in `pt-br-locale.test.js` never moves.
 
 ## Health Connect read (Phase 2)
 

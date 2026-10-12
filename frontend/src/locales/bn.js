@@ -1,5 +1,15 @@
 // Bengali UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
+  // --- fork (hpeppitt/opengym): program import, OG-010 ---
+  'Gemini API key': 'Gemini API কী',
+  'Saved on this phone': 'এই ফোনে সংরক্ষিত',
+  'Needed to import workout screenshots': 'ওয়ার্কআউটের স্ক্রিনশট ইমপোর্ট করতে দরকার',
+  'Used to read workout screenshots for import. It stays in this phone’s secure storage and is never included in backups or sync.': 'ইমপোর্টের জন্য ওয়ার্কআউটের স্ক্রিনশট পড়তে এটি ব্যবহার হয়। এটি এই ফোনের সুরক্ষিত স্টোরেজে থাকে এবং কখনও ব্যাকআপ বা সিঙ্কে যায় না।',
+  'Get a key in Google AI Studio': 'Google AI Studio থেকে কী নিন',
+  'Gemini key saved': 'Gemini কী সংরক্ষিত হয়েছে',
+  'Gemini key removed': 'Gemini কী সরানো হয়েছে',
+  'Remove key': 'কী সরান',
+  // --- end fork ---
   'Confirm': 'নিশ্চিত করুন',
   'Cancel': 'বাতিল',
   'Press back again to exit': 'বের হতে আবার ব্যাক চাপুন',

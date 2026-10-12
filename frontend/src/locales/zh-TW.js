@@ -1,4 +1,14 @@
 export default {
+  // --- fork (hpeppitt/opengym): program import, OG-010 ---
+  'Gemini API key': 'Gemini API 金鑰',
+  'Saved on this phone': '已儲存在這支手機上',
+  'Needed to import workout screenshots': '匯入訓練截圖時需要',
+  'Used to read workout screenshots for import. It stays in this phone’s secure storage and is never included in backups or sync.': '用來讀取要匯入的訓練截圖。它只會保存在這支手機的安全儲存空間，絕不會包含在備份或同步中。',
+  'Get a key in Google AI Studio': '在 Google AI Studio 取得金鑰',
+  'Gemini key saved': '已儲存 Gemini 金鑰',
+  'Gemini key removed': '已移除 Gemini 金鑰',
+  'Remove key': '移除金鑰',
+  // --- end fork ---
   'Confirm': '確認',
   'Cancel': '取消',
   'Press back again to exit': '再按一次返回以退出',

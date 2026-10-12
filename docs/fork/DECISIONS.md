@@ -32,3 +32,7 @@ Dated, append-only. One entry per decision that changes direction.
   (OG-004). A PR opened or a branch pushed with the workflow token would not trigger
   `test.yml`, and the fork does not allow Actions to open PRs; a personal token would fix both
   but is a secret to rotate for no real gain. The issue carries a one-click link to open the PR.
+- The Gemini key for the import has its own secure-storage slot, separate from the AI Coach's
+  own key, even though the Coach can also run on Gemini (Harry's call, OG-010). The import then
+  works whatever the Coach is set to, and the fork's code stays out of upstream's Coach code. The
+  cost is entering the key twice if the Coach is also used on Gemini.

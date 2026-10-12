@@ -51,8 +51,13 @@ Guards added; the gate waits on Actions being enabled in the fork and a push to 
 ## Phase 1: Anatoly import (P0)
 
 ### OG-010 Gemini key in Settings, secure storage
-status: ready
+status: building
 Reuse the AI Coach own-key path. Gate: key round-trips through secure storage on the phone.
+Built: `lib/gemini-key.js` keeps the key in its own secure-storage slot (`anatoly.geminiKey`)
+through upstream's `coach-secrets.js` helpers, never shared with the Coach's key.
+`components/fork/GeminiKeyRow.jsx` sits under Settings, Data & backup, Bring data in, phone builds
+only. Unit tests cover the round trip, trimming, blank keys and isolation from the Coach key.
+Remaining: the on-device round trip, which needs OG-002's APK.
 
 ### OG-011 Image to prescription: `lib/anatoly-import.js`
 status: ready

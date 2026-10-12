@@ -1,5 +1,15 @@
 // Thai UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
+  // --- fork (hpeppitt/opengym): program import, OG-010 ---
+  'Gemini API key': 'คีย์ API ของ Gemini',
+  'Saved on this phone': 'บันทึกไว้ในโทรศัพท์เครื่องนี้',
+  'Needed to import workout screenshots': 'จำเป็นสำหรับนำเข้าภาพหน้าจอการออกกำลังกาย',
+  'Used to read workout screenshots for import. It stays in this phone’s secure storage and is never included in backups or sync.': 'ใช้อ่านภาพหน้าจอการออกกำลังกายเพื่อนำเข้า คีย์จะอยู่ในพื้นที่จัดเก็บที่ปลอดภัยของโทรศัพท์เครื่องนี้ และจะไม่ถูกรวมไว้ในข้อมูลสำรองหรือการซิงค์',
+  'Get a key in Google AI Studio': 'รับคีย์ใน Google AI Studio',
+  'Gemini key saved': 'บันทึกคีย์ Gemini แล้ว',
+  'Gemini key removed': 'ลบคีย์ Gemini แล้ว',
+  'Remove key': 'ลบคีย์',
+  // --- end fork ---
   // --- generic ---
   'Confirm': 'ยืนยัน',
   'Cancel': 'ยกเลิก',

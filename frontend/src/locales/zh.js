@@ -1,5 +1,15 @@
 // Simplified Chinese UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
+  // --- fork (hpeppitt/opengym): program import, OG-010 ---
+  'Gemini API key': 'Gemini API 密钥',
+  'Saved on this phone': '已保存在此手机上',
+  'Needed to import workout screenshots': '导入训练截图时需要',
+  'Used to read workout screenshots for import. It stays in this phone’s secure storage and is never included in backups or sync.': '用于读取要导入的训练截图。它只保存在此手机的安全存储中，绝不会包含在备份或同步中。',
+  'Get a key in Google AI Studio': '在 Google AI Studio 获取密钥',
+  'Gemini key saved': '已保存 Gemini 密钥',
+  'Gemini key removed': '已移除 Gemini 密钥',
+  'Remove key': '移除密钥',
+  // --- end fork ---
   'Confirm': '确认',
   'Cancel': '取消',
   'Press back again to exit': '再按一次返回退出',
