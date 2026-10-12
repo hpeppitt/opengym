@@ -32,7 +32,7 @@ weekly cron / dispatch  ->  .github/workflows/fork-upstream-sync.yml  (skips out
 
 ```
 photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from secure storage)
-        ->  { sourceText, sets, reps, targetWeight }[]
+        ->  { sourceText, sets, reps, repsMax, targetWeight, weightUnit, timeSeconds, notes }[]
         ->  lib/anatoly-match.js   ->  upstream matchExercise() + fuzzy score
         ->  exact | fuzzy | unmatched per row, user confirms fuzzy and unmatched
         ->  one routine, pinned to the chosen date via S.dayPlan[iso]
@@ -42,6 +42,9 @@ photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from sec
   happens on the phone against `lib/exercises.js`. This is the one deliberate departure from
   fit-app's `workoutImageImport.ts`, which put its 80-entry library in the prompt.
 - Match states and the confirmation step are fit-app's FIT-120 design, carried over.
+- `lib/anatoly-import.js` is pure apart from `importFromImages()`, which takes `fetch` as a
+  parameter. Failures are `AnatolyImportError` with a `code` (`no-key`, `auth`, `network`,
+  `max-tokens`, `truncated`, `unreadable`, `empty`, and so on) for the sheet to translate.
 - Output is an ordinary routine so the upstream workout flow, progression and 1RM all apply.
 - The Gemini key (OG-010) lives in `lib/gemini-key.js`, slot `anatoly.geminiKey`, stored through
   upstream's `secureGet`/`secureSet` in `lib/coach-secrets.js`. Its Settings row is

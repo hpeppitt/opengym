@@ -36,3 +36,7 @@ Dated, append-only. One entry per decision that changes direction.
   own key, even though the Coach can also run on Gemini (Harry's call, OG-010). The import then
   works whatever the Coach is set to, and the fork's code stays out of upstream's Coach code. The
   cost is entering the key twice if the Coach is also used on Gemini.
+- The import detects a cut-off Gemini answer by counting brace depth outside strings, not by
+  fit-app's "no closing brace anywhere" test (OG-011). An answer usually runs out after a few
+  complete exercises, so fit-app's check reported real truncation as malformed JSON. Rows also
+  keep rep ranges, the weight unit, durations and notes, which fit-app's rows did not.

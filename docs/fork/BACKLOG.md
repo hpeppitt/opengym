@@ -61,12 +61,15 @@ only. Unit tests cover the round trip, trimming, blank keys and isolation from t
 Remaining: the on-device round trip, which needs OG-002's APK.
 
 ### OG-011 Image to prescription: `lib/anatoly-import.js`
-status: ready
+status: done
 depends on: OG-010
 Port fit-app's `services/workoutImageImport.ts` prompt and JSON parse. Input: photos as base64.
 Output: `{ sourceText, sets, reps, targetWeight }[]`. Pinned model `gemini-3.5-flash`,
 `maxOutputTokens` 8192 (thinking tokens count against it; fit-app FIT-091). Gate: tests on the
 parser with fixture responses, including a truncated one.
+Done: rows also carry `repsMax` (a range such as 8-10), `weightUnit` (kg, lb or null),
+`timeSeconds` and `notes`, so timed holds and ranges survive. Errors carry a stable `code` for
+OG-013 to translate. Not yet run against the live API: that needs a key, and happens in OG-013.
 
 ### OG-012 Library match with confirmation: `lib/anatoly-match.js`
 status: ready
