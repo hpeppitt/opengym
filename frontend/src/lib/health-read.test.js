@@ -88,9 +88,10 @@ describe('readStats', () => {
     answers.exerciseSessions = { sessions: [{ type: 56, maxHr: 185 }] }
     const r = await readStats({ days: 3, age: 30, now })
     expect(r.days.map(d => d.date)).toEqual(['2026-10-10', '2026-10-11', '2026-10-12'])
-    expect(r.days[0]).toEqual({ date: '2026-10-10', steps: null, kcalBurned: null, kcalEaten: null, proteinG: null, sleepScore: null })
+    expect(r.days[0]).toEqual({ date: '2026-10-10', steps: null, kcalBurned: null, kcalEaten: null, proteinG: null, sleepScore: null, sleepMins: null })
     expect(r.days[1]).toMatchObject({ steps: 9000, kcalEaten: 2100, proteinG: 150, sleepScore: null })
     expect(r.days[2].sleepScore).toBeGreaterThan(0)
+    expect(r.days[2].sleepMins).toBe(480)
     expect(r.vo2).toMatchObject({ restingHR: 55, cardioMaxHR: 185 })
   })
 
@@ -113,5 +114,37 @@ describe('readStats', () => {
 
   it('local dates follow the phone\'s calendar', () => {
     expect(localDate(at('2026-10-12T23:59:59Z'))).toBe('2026-10-12')
+  })
+})
+
+import { summarizeStats, ageFrom } from './health-read.js'
+
+describe('summarizeStats (Home card)', () => {
+  const day = (date, o = {}) => ({ date, steps: null, kcalBurned: null, kcalEaten: null, proteinG: null, sleepScore: null, sleepMins: null, ...o })
+  it('shows today and averages the earlier days, skipping gaps', () => {
+    const s = summarizeStats({ days: [
+      day('2026-10-10', { steps: 8000, kcalBurned: 2500, sleepScore: 70 }),
+      day('2026-10-11', { steps: 10000, kcalBurned: null, sleepScore: 90 }),
+      day('2026-10-12', { steps: 2000, kcalBurned: 1800, kcalEaten: 1200, sleepScore: 82, sleepMins: 466 }),
+    ], vo2: { vo2Max: 47.2 } })
+    expect(s.sleep).toEqual({ score: 82, mins: 466, avg: 80 })
+    expect(s.steps).toEqual({ today: 2000, avg: 9000 })
+    expect(s.calories).toEqual({ burned: 1800, eaten: 1200, avg: 2500 })
+    expect(s.vo2).toEqual({ vo2Max: 47.2 })
+  })
+  it('copes with nothing at all', () => {
+    expect(summarizeStats(null)).toEqual({ sleep: { score: null, mins: null, avg: null }, steps: { today: null, avg: null }, calories: { burned: null, eaten: null, avg: null }, vo2: null })
+  })
+})
+
+describe('ageFrom', () => {
+  const now = new Date('2026-10-12T00:00:00Z')
+  it('turns a plausible birth year into an age, and refuses the rest', () => {
+    expect(ageFrom(1990, now)).toBe(36)
+    expect(ageFrom('1990', now)).toBe(36)
+    expect(ageFrom(2020, now)).toBe(null)
+    expect(ageFrom(1900, now)).toBe(null)
+    expect(ageFrom(undefined, now)).toBe(null)
+    expect(ageFrom('19x0', now)).toBe(null)
   })
 })

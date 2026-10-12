@@ -33,6 +33,23 @@ export default {
   'Looks right': 'Rendben',
   'Rows to check: {0}': 'Ellenőrizendő sorok: {0}',
   'Save session': 'Edzés mentése',
+  // OG-022: Home health stats
+  'Health stats': 'Egészségadatok',
+  'Read sleep, steps, calories and heart rate from Health Connect to show them here. Nothing leaves this phone.': 'Olvasd be az alvást, lépéseket, kalóriát és pulzust a Health Connectből, hogy itt lásd. Semmi nem hagyja el a telefont.',
+  'Couldn’t read Health Connect.': 'Nem sikerült olvasni a Health Connectet.',
+  'Sleep': 'Alvás',
+  'Steps': 'Lépések',
+  'Calories': 'Kalória',
+  'VO2 max': 'VO2 max',
+  '7-day avg {0}': '7 napos átlag {0}',
+  'Eaten {0}': 'Elfogyasztva {0}',
+  'Needs resting heart rate': 'Nyugalmi pulzus kell hozzá',
+  'From cardio heart rate': 'Kardió pulzusból',
+  'From resting heart rate and age': 'Nyugalmi pulzusból és korból',
+  'Add your birth year': 'Add meg a születési éved',
+  'Birth year': 'Születési év',
+  'VO2 max is estimated from your resting and peak heart rate and your age.': 'A VO2 max a nyugalmi és csúcspulzusodból, valamint a korodból becsült érték.',
+  'Show sleep, steps, calories and VO2 max from Health Connect on Home.': 'Alvás, lépések, kalória és VO2 max a Health Connectből a Kezdőlapon.',
   // --- end fork ---
   // --- generic ---
   'Confirm': 'Megerősítés',

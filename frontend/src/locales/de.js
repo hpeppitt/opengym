@@ -33,6 +33,23 @@ export default {
   'Looks right': 'Passt',
   'Rows to check: {0}': 'Noch zu prüfen: {0}',
   'Save session': 'Training speichern',
+  // OG-022: Home health stats
+  'Health stats': 'Gesundheitswerte',
+  'Read sleep, steps, calories and heart rate from Health Connect to show them here. Nothing leaves this phone.': 'Lies Schlaf, Schritte, Kalorien und Herzfrequenz aus Health Connect, um sie hier zu zeigen. Nichts verlässt dieses Telefon.',
+  'Couldn’t read Health Connect.': 'Health Connect konnte nicht gelesen werden.',
+  'Sleep': 'Schlaf',
+  'Steps': 'Schritte',
+  'Calories': 'Kalorien',
+  'VO2 max': 'VO2max',
+  '7-day avg {0}': 'Ø 7 Tage {0}',
+  'Eaten {0}': 'Gegessen {0}',
+  'Needs resting heart rate': 'Braucht Ruhepuls',
+  'From cardio heart rate': 'Aus Cardio-Herzfrequenz',
+  'From resting heart rate and age': 'Aus Ruhepuls und Alter',
+  'Add your birth year': 'Geburtsjahr eintragen',
+  'Birth year': 'Geburtsjahr',
+  'VO2 max is estimated from your resting and peak heart rate and your age.': 'VO2max wird aus Ruhepuls, Spitzenpuls und Alter geschätzt.',
+  'Show sleep, steps, calories and VO2 max from Health Connect on Home.': 'Schlaf, Schritte, Kalorien und VO2max aus Health Connect auf der Startseite zeigen.',
   // --- end fork ---
   // --- generic ---
   'Confirm': 'Bestätigen',

@@ -33,6 +33,23 @@ export default {
   'Looks right': 'ถูกต้อง',
   'Rows to check: {0}': 'แถวที่ต้องตรวจ: {0}',
   'Save session': 'บันทึกเซสชัน',
+  // OG-022: Home health stats
+  'Health stats': 'ข้อมูลสุขภาพ',
+  'Read sleep, steps, calories and heart rate from Health Connect to show them here. Nothing leaves this phone.': 'อ่านการนอน ก้าวเดิน แคลอรี และอัตราการเต้นของหัวใจจาก Health Connect เพื่อแสดงที่นี่ ไม่มีข้อมูลใดออกจากโทรศัพท์เครื่องนี้',
+  'Couldn’t read Health Connect.': 'อ่าน Health Connect ไม่ได้',
+  'Sleep': 'การนอน',
+  'Steps': 'ก้าว',
+  'Calories': 'แคลอรี',
+  'VO2 max': 'VO2 max',
+  '7-day avg {0}': 'เฉลี่ย 7 วัน {0}',
+  'Eaten {0}': 'ที่กิน {0}',
+  'Needs resting heart rate': 'ต้องมีอัตราการเต้นหัวใจขณะพัก',
+  'From cardio heart rate': 'จากอัตราการเต้นหัวใจขณะคาร์ดิโอ',
+  'From resting heart rate and age': 'จากอัตราการเต้นหัวใจขณะพักและอายุ',
+  'Add your birth year': 'เพิ่มปีเกิดของคุณ',
+  'Birth year': 'ปีเกิด',
+  'VO2 max is estimated from your resting and peak heart rate and your age.': 'VO2 max ประเมินจากอัตราการเต้นหัวใจขณะพัก อัตราสูงสุด และอายุของคุณ',
+  'Show sleep, steps, calories and VO2 max from Health Connect on Home.': 'แสดงการนอน ก้าวเดิน แคลอรี และ VO2 max จาก Health Connect ในหน้าหลัก',
   // --- end fork ---
   // --- generic ---
   'Confirm': 'ยืนยัน',
