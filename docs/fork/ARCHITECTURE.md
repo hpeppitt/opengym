@@ -35,7 +35,8 @@ photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from sec
         ->  { sourceText, sets, reps, repsMax, targetWeight, weightUnit, timeSeconds, notes }[]
         ->  lib/anatoly-match.js   ->  upstream matchExercise() + fuzzy score
         ->  exact | fuzzy | unmatched per row, user confirms fuzzy and unmatched
-        ->  one routine, pinned to the chosen date via S.dayPlan[iso]
+        ->  lib/anatoly-routine.js: one routine per date (anatoly: { date }), pinned via S.dayPlan[iso]
+        ->  removed when Plan opens after that date; the logged workout stays in History
 ```
 
 - The exercise library is 5,600 entries, too many for the prompt. Gemini returns names; matching
@@ -50,6 +51,9 @@ photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from sec
   parameter. Failures are `AnatolyImportError` with a `code` (`no-key`, `auth`, `network`,
   `max-tokens`, `truncated`, `unreadable`, `empty`, and so on) for the sheet to translate.
 - Output is an ordinary routine so the upstream workout flow, progression and 1RM all apply.
+- The sheet is `components/fork/AnatolyImport.jsx`, hooked into upstream's Plan header by an
+  import and one line. It also runs the tidy-up when Plan mounts. A running workout's routine is
+  never removed. Photo decoding lives in `components/fork/anatoly-images.js` so tests can swap it.
 - The Gemini key (OG-010) lives in `lib/gemini-key.js`, slot `anatoly.geminiKey`, stored through
   upstream's `secureGet`/`secureSet` in `lib/coach-secrets.js`. Its Settings row is
   `components/fork/GeminiKeyRow.jsx`, hooked into upstream's Settings by an import and one line
