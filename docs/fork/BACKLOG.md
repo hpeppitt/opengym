@@ -39,14 +39,15 @@ four probe refs (up to date, clean, conflict, failing test). Remaining gate: onc
 manual dispatch opens the issue or reports up to date.
 
 ### OG-005 Guard upstream's deploy workflows in the fork
-status: building
+status: done
 `pages.yml` and `docker-publish.yml` have no repository guard, so a push to the fork's `main`
 would try to deploy upstream's site to the fork's Pages and publish images to
 `ghcr.io/hpeppitt`. Add `if: github.repository == 'DuarteSantos8/openGym'` to their jobs, as
 `mirror.yml` does, a one-line `[upstream]` hook each. Also confirm Actions run in the fork at
 all: no run has appeared yet, which suggests the fork's Actions tab still needs enabling once.
 Gate: a push to `main` shows only the fork's own and upstream's test workflows running.
-Guards added; the gate waits on Actions being enabled in the fork and a push to `main`.
+Done 2026-10-12: on the push of #5's merge, Pages, Docker publish and the mirror all skipped.
+Actions were already enabled. One Docker publish ran on #4's merge, before the guard landed.
 
 ## Phase 1: Anatoly import (P0)
 
