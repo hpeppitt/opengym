@@ -1,5 +1,15 @@
 // Italian UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
+  // --- fork (hpeppitt/opengym): program import, OG-010 ---
+  'Gemini API key': 'Chiave API Gemini',
+  'Saved on this phone': 'Salvata su questo telefono',
+  'Needed to import workout screenshots': 'Serve per importare gli screenshot degli allenamenti',
+  'Used to read workout screenshots for import. It stays in this phone’s secure storage and is never included in backups or sync.': 'Serve a leggere gli screenshot degli allenamenti da importare. Resta nella memoria sicura di questo telefono e non viene mai inclusa nei backup né nella sincronizzazione.',
+  'Get a key in Google AI Studio': 'Ottieni una chiave in Google AI Studio',
+  'Gemini key saved': 'Chiave Gemini salvata',
+  'Gemini key removed': 'Chiave Gemini rimossa',
+  'Remove key': 'Rimuovi chiave',
+  // --- end fork ---
   'Confirm': 'Conferma',
   'Cancel': 'Annulla',
   'Press back again to exit': 'Premi di nuovo indietro per uscire',

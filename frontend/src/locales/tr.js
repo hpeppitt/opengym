@@ -1,5 +1,15 @@
 // Turkish UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
+  // --- fork (hpeppitt/opengym): program import, OG-010 ---
+  'Gemini API key': 'Gemini API anahtarı',
+  'Saved on this phone': 'Bu telefonda kayıtlı',
+  'Needed to import workout screenshots': 'Antrenman ekran görüntülerini içe aktarmak için gerekli',
+  'Used to read workout screenshots for import. It stays in this phone’s secure storage and is never included in backups or sync.': 'İçe aktarılacak antrenman ekran görüntülerini okumak için kullanılır. Bu telefonun güvenli depolamasında kalır, yedeklere ve eşitlemeye asla dahil edilmez.',
+  'Get a key in Google AI Studio': 'Google AI Studio’dan anahtar al',
+  'Gemini key saved': 'Gemini anahtarı kaydedildi',
+  'Gemini key removed': 'Gemini anahtarı kaldırıldı',
+  'Remove key': 'Anahtarı kaldır',
+  // --- end fork ---
   'Confirm': 'Onayla',
   'Cancel': 'İptal',
   'Press back again to exit': 'Çıkmak için geri tuşuna tekrar basın',

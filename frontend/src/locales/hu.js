@@ -1,5 +1,15 @@
 // Hungarian UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
+  // --- fork (hpeppitt/opengym): program import, OG-010 ---
+  'Gemini API key': 'Gemini API-kulcs',
+  'Saved on this phone': 'Ezen a telefonon mentve',
+  'Needed to import workout screenshots': 'Edzés-képernyőképek importálásához kell',
+  'Used to read workout screenshots for import. It stays in this phone’s secure storage and is never included in backups or sync.': 'Az importálandó edzés-képernyőképek beolvasására szolgál. A telefon biztonságos tárhelyén marad, és soha nem kerül biztonsági mentésbe vagy szinkronizálásba.',
+  'Get a key in Google AI Studio': 'Kulcs kérése a Google AI Studióban',
+  'Gemini key saved': 'Gemini-kulcs mentve',
+  'Gemini key removed': 'Gemini-kulcs törölve',
+  'Remove key': 'Kulcs törlése',
+  // --- end fork ---
   // --- generic ---
   'Confirm': 'Megerősítés',
   'Cancel': 'Mégse',

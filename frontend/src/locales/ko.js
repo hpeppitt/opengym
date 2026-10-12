@@ -1,5 +1,15 @@
 // Korean UI strings. Keys are the English source strings (see lib/i18n.js).
 export default {
+  // --- fork (hpeppitt/opengym): program import, OG-010 ---
+  'Gemini API key': 'Gemini API 키',
+  'Saved on this phone': '이 휴대폰에 저장됨',
+  'Needed to import workout screenshots': '운동 스크린샷을 가져오려면 필요합니다',
+  'Used to read workout screenshots for import. It stays in this phone’s secure storage and is never included in backups or sync.': '가져올 운동 스크린샷을 읽는 데 사용됩니다. 이 휴대폰의 보안 저장소에만 보관되며 백업이나 동기화에는 절대 포함되지 않습니다.',
+  'Get a key in Google AI Studio': 'Google AI Studio에서 키 받기',
+  'Gemini key saved': 'Gemini 키를 저장했습니다',
+  'Gemini key removed': 'Gemini 키를 삭제했습니다',
+  'Remove key': '키 삭제',
+  // --- end fork ---
   'Confirm': '확인',
   'Cancel': '취소',
   'Press back again to exit': '뒤로를 한 번 더 누르면 종료됩니다',
