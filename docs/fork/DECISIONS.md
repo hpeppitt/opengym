@@ -40,3 +40,7 @@ Dated, append-only. One entry per decision that changes direction.
   fit-app's "no closing brace anywhere" test (OG-011). An answer usually runs out after a few
   complete exercises, so fit-app's check reported real truncation as malformed JSON. Rows also
   keep rep ranges, the weight unit, durations and notes, which fit-app's rows did not.
+- The import's exact-match threshold is 0.65, above fit-app's 0.6 (OG-012). Against the real
+  catalogue, "Barbell back squat" scored exactly 0.6 against upstream's pick, a camera-angle
+  variant ("barbell full squat (back pov)"), and was accepted without asking. A fuzzy row costs
+  one tap to confirm; a wrong exact row files history under the wrong lift.
