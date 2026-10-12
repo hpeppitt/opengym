@@ -25,7 +25,7 @@ vi.mock('../../store/useUI.js', () => {
 vi.mock('../../lib/mobile.js', () => ({ MOBILE: true, isAndroid: async () => mocks.android }))
 vi.mock('../../lib/health-read.js', async orig => ({
   ...(await orig()),
-  healthReadStatus: vi.fn(), requestHealthRead: vi.fn(), readStats: vi.fn(),
+  healthReadStatus: vi.fn(), requestHealthRead: vi.fn(), readStats: vi.fn(), readWeights: vi.fn(),
 }))
 
 const hr = await import('../../lib/health-read.js')
@@ -109,5 +109,40 @@ describe('Home health card (OG-022)', () => {
     expect(sw).toBeTruthy()
     await act(async () => { sw.click() })
     expect(mocks.S.showHealthCards).toBe(false)
+  })
+})
+
+describe('body weight backfill (OG-024)', () => {
+  it('offers to import weight when it is not granted', async () => {
+    hr.healthReadStatus.mockResolvedValue({ status: 'available', granted: { ...ALL, weight: false } })
+    hr.readStats.mockResolvedValue(STATS)
+    await render(<HealthCards key="w1" />)
+    expect(button('Import body weight')).toBeTruthy()
+  })
+
+  it('adds weigh-ins for dates the profile lacks and never replaces one already logged', async () => {
+    const { backfillWeights } = await import('./HealthCards.jsx')
+    const at = iso => Date.parse(iso + 'T07:00:00Z')
+    mocks.S = { unit: 'kg', bodyweight: [{ d: '2026-10-10', w: 79, t: at('2026-10-10') }] }
+    hr.readWeights.mockResolvedValue([
+      { time: at('2026-10-09'), kg: 80.2, origin: 'com.fitbit.FitbitMobile' },
+      { time: at('2026-10-10'), kg: 81.5, origin: 'com.fitbit.FitbitMobile' },   // already logged in openGym
+      { time: at('2026-10-11'), kg: 80.8, origin: 'com.fitbit.FitbitMobile' },
+    ])
+    const added = await backfillWeights({ now: at('2026-10-12') })
+    expect(added).toBe(2)
+    expect(mocks.S.bodyweight.map(b => [b.d, b.w])).toEqual([['2026-10-09', 80.2], ['2026-10-10', 79], ['2026-10-11', 80.8]])
+    const [start, end] = hr.readWeights.mock.calls[0]
+    expect(end - start).toBeGreaterThan(9 * 365 * 86400000)
+  })
+
+  it('backfills on its own once weight is granted, and says how many came in', async () => {
+    mocks.S = { unit: 'kg', bodyweight: [] }
+    hr.healthReadStatus.mockResolvedValue({ status: 'available', granted: { ...ALL, weight: true } })
+    hr.readStats.mockResolvedValue(STATS)
+    hr.readWeights.mockResolvedValue([{ time: Date.parse('2026-10-01T07:00:00Z'), kg: 82, origin: 'com.fitbit.FitbitMobile' }])
+    await render(<HealthCards key="w2" />)
+    expect(mocks.S.bodyweight).toHaveLength(1)
+    expect(button('Import body weight')).toBeFalsy()
   })
 })

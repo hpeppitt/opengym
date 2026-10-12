@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react'
 import { t } from '../../lib/i18n.js'
 import { MOBILE, isAndroid } from '../../lib/mobile.js'
 import { fmtNum, fmtDur } from '../../lib/format.js'
-import { healthReadStatus, requestHealthRead, readStats, summarizeStats, ageFrom } from '../../lib/health-read.js'
+import { healthReadStatus, requestHealthRead, readStats, summarizeStats, ageFrom, readWeights, weighInsFromRecords } from '../../lib/health-read.js'
+import { mergeImport } from '../../lib/import-csv.js'
 import { useStore } from '../../store/useStore.js'
 import { useUI } from '../../store/useUI.js'
 import { Button, Row, Switch, TextField } from '../ui.jsx'
@@ -17,6 +18,18 @@ const n = v => (v == null ? '–' : fmtNum(Math.round(v)))
 
 // The last good read, kept across visits to Home so the card does not flash empty each time.
 let last = null
+// Body weight is backfilled once per app session (OG-024): every Health Connect weigh-in of the
+// last ten years on a date the profile has none for. mergeImport never replaces a weigh-in that
+// is already there, so one logged in openGym always wins over the watch's.
+let weightsDone = false
+const YEARS_10 = 10 * 365 * 86400000
+export async function backfillWeights({ now = Date.now() } = {}) {
+  const { S, update } = useStore.getState()
+  const fresh = weighInsFromRecords(await readWeights(now - YEARS_10, now), S.unit || 'kg')
+  let added = 0
+  if (fresh.length) update(s => { s.bodyweight = s.bodyweight || []; added = mergeImport(s, { kind: 'bodyweight', bodyweight: fresh }).added })
+  return added
+}
 
 export default function HealthCards() {
   const S = useStore(s => s.S)
@@ -32,7 +45,12 @@ export default function HealthCards() {
       if (!Object.values(st.granted || {}).some(Boolean)) return setState({ kind: 'connect' })
       const stats = await readStats({ days: 7, age })
       last = stats
-      setState({ kind: 'data', stats })
+      setState({ kind: 'data', stats, weight: !!st.granted.weight })
+      if (st.granted.weight && !weightsDone) {
+        weightsDone = true
+        const added = await backfillWeights().catch(() => { weightsDone = false; return 0 })
+        if (added) useUI.getState().toast(t('Body weight: {0} weigh-ins added from Health Connect', added))
+      }
     } catch (e) {
       setState(s => (s.kind === 'data' ? s : { kind: 'error' }))
     }
@@ -67,6 +85,10 @@ export default function HealthCards() {
       <Button size="sm" onClick={load}>{t('Try again')}</Button>
     </>}
     {state.kind === 'data' && <Tiles s={summarizeStats(state.stats)} age={age} />}
+    {state.kind === 'data' && state.weight === false && <div className="row between" style={{ marginTop: 10, gap: 10 }}>
+      <span className="small dim">{t('Bring your weigh-ins in from Health Connect.')}</span>
+      <Button size="sm" variant="tinted" icon="scale" onClick={connect}>{t('Import body weight')}</Button>
+    </div>}
   </div>
 }
 

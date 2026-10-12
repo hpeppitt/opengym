@@ -148,3 +148,26 @@ describe('ageFrom', () => {
     expect(ageFrom('19x0', now)).toBe(null)
   })
 })
+
+import { weighInsFromRecords } from './health-read.js'
+
+describe('weighInsFromRecords (OG-024 body weight backfill)', () => {
+  const r = (iso, kg, origin = 'com.fitbit.FitbitMobile') => ({ time: Date.parse(iso), kg, origin })
+  it('keeps one weigh-in per day, the last of that day, rounded to 0.1', () => {
+    expect(weighInsFromRecords([r('2026-10-11T07:00:00Z', 80.04), r('2026-10-11T21:00:00Z', 80.96), r('2026-10-09T07:00:00Z', 81.3)])).toEqual([
+      { d: '2026-10-09', t: Date.parse('2026-10-09T07:00:00Z'), w: 81.3 },
+      { d: '2026-10-11', t: Date.parse('2026-10-11T21:00:00Z'), w: 81 },
+    ])
+  })
+  it('converts to pounds for a pound profile', () => {
+    expect(weighInsFromRecords([r('2026-10-11T07:00:00Z', 80)], 'lb')[0].w).toBe(176.4)
+  })
+  it('drops what openGym wrote itself, under any of its app ids, and broken readings', () => {
+    const out = weighInsFromRecords([
+      r('2026-10-01T07:00:00Z', 80, 'com.hpeppitt.opengym'), r('2026-10-02T07:00:00Z', 80, 'com.hpeppitt.opengym.test'),
+      r('2026-10-03T07:00:00Z', 80, 'ch.duartesantos.opengym'), r('2026-10-04T07:00:00Z', 5), r('2026-10-05T07:00:00Z', NaN),
+      r('2026-10-06T07:00:00Z', 79.5, 'com.withings.wiscale2'),
+    ])
+    expect(out.map(x => x.d)).toEqual(['2026-10-06'])
+  })
+})
