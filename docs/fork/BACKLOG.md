@@ -72,10 +72,15 @@ Done: rows also carry `repsMax` (a range such as 8-10), `weightUnit` (kg, lb or 
 OG-013 to translate. Not yet run against the live API: that needs a key, and happens in OG-013.
 
 ### OG-012 Library match with confirmation: `lib/anatoly-match.js`
-status: ready
+status: done
 depends on: OG-011
 `matchExercise` plus a similarity score; exact, fuzzy, unmatched per row; unmatched becomes a
 custom exercise as the CSV importer does. Gate: tests for the three states and the threshold.
+Done: order is the user's own custom exercise, then upstream's `matchExercise`, then the closest
+catalogue name by word overlap (always fuzzy). Each row carries up to three `candidates` for the
+review step. Threshold 0.65, not fit-app's 0.6 (see DECISIONS). DB, BB and KB are expanded.
+`resolveRows()` turns unmatched or rejected rows into custom exercises with the CSV importer's
+shape and id scheme. 17 tests against the real catalogue.
 
 ### OG-013 Import sheet and date pin
 status: ready

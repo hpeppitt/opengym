@@ -42,6 +42,10 @@ photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from sec
   happens on the phone against `lib/exercises.js`. This is the one deliberate departure from
   fit-app's `workoutImageImport.ts`, which put its 80-entry library in the prompt.
 - Match states and the confirmation step are fit-app's FIT-120 design, carried over.
+- `lib/anatoly-match.js` resolves a name in this order: a custom exercise the user already has
+  (by the id an earlier import gave it, or by name), upstream's `matchExercise` from
+  `lib/import-csv.js`, then the closest catalogue name by word overlap, which is never exact.
+  `resolveRows()` returns the rows with ids plus only the new custom exercises; the caller merges.
 - `lib/anatoly-import.js` is pure apart from `importFromImages()`, which takes `fetch` as a
   parameter. Failures are `AnatolyImportError` with a `code` (`no-key`, `auth`, `network`,
   `max-tokens`, `truncated`, `unreadable`, `empty`, and so on) for the sheet to translate.
