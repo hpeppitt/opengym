@@ -71,3 +71,8 @@ Dated, append-only. One entry per decision that changes direction.
 - The health stats live on Home as one card, hidden by a Settings switch beside the body
   weight card's (Harry's call, OG-022). The birth year VO2 max needs is entered on the card and
   kept in synced state; no health readings are stored, they are read from Health Connect each time.
+- The fork is English only (Harry's call, OG-016). Its strings are not added to any locale file;
+  `t()` shows the English key. The locale files are kept, unchanged from upstream, rather than
+  deleted: upstream edits them in nearly every release, and deleted files would turn each of those
+  edits into a modify/delete conflict. The locale check still passes because it compares the
+  locale files with each other.

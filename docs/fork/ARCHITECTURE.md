@@ -58,9 +58,8 @@ photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from sec
   upstream's `secureGet`/`secureSet` in `lib/coach-secrets.js`. Its Settings row is
   `components/fork/GeminiKeyRow.jsx`, hooked into upstream's Settings by an import and one line
   under Data & backup, Bring data in. Shown on phone builds only.
-- Fork UI strings sit in a marked block right after each locale file's opening line, where
-  upstream rarely edits. pt-BR repeats every fork string as an explicit override, even where it
-  matches pt, so upstream's pinned inheritance fingerprint in `pt-br-locale.test.js` never moves.
+- Fork UI strings are English only and live in the code as `t()` keys; no locale file carries a
+  fork string (OG-016), so upstream's locale files and their tests are untouched.
 
 ## Health Connect read (Phase 2)
 
