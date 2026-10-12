@@ -18,6 +18,7 @@ import { useStore } from '../../store/useStore.js'
 import { useUI } from '../../store/useUI.js'
 import { Button, Row, SelectRow } from '../ui.jsx'
 import Icon from '../Icon.jsx'
+import { exercisePicker } from '../../sheets.jsx'
 import { toImage } from './anatoly-images.js'
 
 export default function AnatolyImportButton() {
@@ -72,7 +73,12 @@ export function sessionTitle(ex, bpOf, date) {
   const groups = names.length > 1 ? names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1] : names[0]
   return (groups ? groups + ' · ' : 'Anatoly · ') + fmtDate(date)
 }
-const nameOf = id => exerciseNameText(exOr(id))
+// A catalogue name in the app's language, or a custom exercise's own name (the picker can make one).
+const nameOf = (id, customEx = []) => {
+  if (EXIDX[id]) return exerciseNameText(exOr(id))
+  const c = customEx.find(x => x.id === id)
+  return c ? exerciseNameText(c) : exerciseNameText(exOr(id))
+}
 
 function AnatolyImportSheet({ close }) {
   const S = useStore(s => s.S)
@@ -85,6 +91,7 @@ function AnatolyImportSheet({ close }) {
   const [rows, setRows] = useState(null)        // matched rows, once read
   const [choice, setChoice] = useState([])      // per row: an exercise id, or CUSTOM
   const [ok, setOk] = useState([])              // per row: confirmed
+  const [picked, setPicked] = useState({})      // row -> an exercise chosen from the full library
   const toast = msg => useUI.getState().toast(msg)
 
   const read = async () => {
@@ -103,6 +110,16 @@ function AnatolyImportSheet({ close }) {
 
   const choose = (i, v) => { setChoice(c => c.map((x, j) => (j === i ? v : x))); setOk(o => o.map((x, j) => (j === i ? true : x))) }
   const confirm = i => setOk(o => o.map((x, j) => (j === i ? true : x)))
+  // The whole library, searchable, when three suggestions are not enough: upstream's own picker,
+  // opened on what trains the same muscle as the current match. "Create your own exercise" in it
+  // saves the new exercise to the library itself, so the row only records the choice.
+  const search = i => {
+    const h = exercisePicker(ex => {
+      setPicked(p => ({ ...p, [i]: ex.id }))
+      choose(i, ex.id)
+      h?.close?.()
+    }, { title: t('Change exercise'), like: choice[i] !== CUSTOM ? choice[i] : undefined })
+  }
   const toCheck = ok.filter(x => !x).length
 
   const save = () => {
@@ -146,9 +163,10 @@ function AnatolyImportSheet({ close }) {
     <h3>{t('Check the session')}</h3>
     <div className="muted small" style={{ marginBottom: 10 }}>{fmtDate(date, true)}</div>
     {rows.map((r, i) => {
+      const cx = S.customEx || []
+      const ids = [picked[i], ...(r.candidates || []).map(c => c.id), r.exerciseId].filter(Boolean)
       const options = [
-        ...(r.candidates || []).map(c => ({ value: c.id, label: nameOf(c.id) })),
-        ...(r.exerciseId && !(r.candidates || []).some(c => c.id === r.exerciseId) ? [{ value: r.exerciseId, label: EXIDX[r.exerciseId] ? nameOf(r.exerciseId) : r.exerciseName }] : []),
+        ...[...new Set(ids)].map(id => ({ value: id, label: EXIDX[id] || cx.some(c => c.id === id) ? nameOf(id, cx) : r.exerciseName })),
         { value: CUSTOM, label: t('New exercise: {0}', r.sourceText) },
       ]
       const tag = choice[i] === CUSTOM ? t('New exercise') : ok[i] ? t('Matched') : t('Check')
@@ -163,7 +181,10 @@ function AnatolyImportSheet({ close }) {
         <div className="small dim" style={{ margin: '2px 0 4px' }}>{rowSummary(r)}</div>
         <SelectRow icon="dumbbell" iconTint="var(--blue)" title={t('Exercise')} value={choice[i]}
           options={options} onChange={v => choose(i, v)} stackedValue />
-        {!ok[i] && <Button size="sm" variant="tinted" icon="check" onClick={() => confirm(i)}>{t('Looks right')}</Button>}
+        <div className="row" style={{ gap: 8, marginTop: 4 }}>
+          {!ok[i] && <Button size="sm" variant="tinted" icon="check" onClick={() => confirm(i)}>{t('Looks right')}</Button>}
+          <Button size="sm" variant="tinted" icon="magnifier" onClick={() => search(i)}>{t('Change exercise')}</Button>
+        </div>
       </div>
     })}
     {toCheck > 0 && <div className="small dim" style={{ margin: '4px 0 10px' }}>{t('Rows to check: {0}', toCheck)}</div>}

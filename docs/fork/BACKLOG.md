@@ -109,6 +109,15 @@ prompt now asks for a `supersetGroup` per exercise, linked rows become an upstre
 shared `sg`), and the review rows show it. Gate: re-import the same screenshot on the phone and
 see the superset and the title. Installed on the phone 2026-10-12, awaiting that check.
 
+### OG-015 Import review: search the whole library for a match
+status: building
+depends on: OG-014
+Harry's feedback: three suggestions plus "new exercise" is not enough. Each review row now has a
+"Change exercise" action that opens upstream's own library picker (search, body-part and
+equipment filters, "Create your own exercise"), opened on what trains the same muscle as the
+current match. A pick counts as reviewing the row. No new strings. Gate: on the phone, search and
+pick an exercise for a row, and the saved routine uses it.
+
 ## Phase 2: Health Connect stats
 
 ### OG-020 `HealthReadPlugin.java` with read permissions
