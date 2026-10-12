@@ -94,7 +94,7 @@ review step. Threshold 0.65, not fit-app's 0.6 (see DECISIONS). DB, BB and KB ar
 shape and id scheme. 17 tests against the real catalogue.
 
 ### OG-013 Import sheet and date pin
-status: building
+status: done
 depends on: OG-012
 Settings or Plan entry: pick photos, review rows, choose a date, save as a routine pinned via
 `dayPlan`. Gate: run-and-verify on device with a real Anatoly screenshot.
@@ -104,26 +104,36 @@ changed before Save. `lib/anatoly-routine.js` builds the routine, one per day, r
 re-import and tidied away when Plan opens after its day has passed. Missing numbers take
 upstream's defaults and the exercise note says so. Tests: 15 for the routine logic, 3 for the
 sheet end to end. Remaining: the on-device run with a real screenshot, which needs OG-002's APK
-and a saved key.
+and a saved key. Done 2026-10-12: Harry ran it on the phone ("Looks good").
 
 ### OG-014 Import feedback: session title and supersets
-status: building
+status: done
 depends on: OG-013
 Harry's feedback from the first device run. (1) Title an imported session by the main muscle
 groups it trains and the date ("Chest & Arms · 14 Oct"): groups ranked by sets, every group with
 at least half the busiest one's sets, at most three. (2) Supersets in the photo were lost: the
 prompt now asks for a `supersetGroup` per exercise, linked rows become an upstream superset (a
 shared `sg`), and the review rows show it. Gate: re-import the same screenshot on the phone and
-see the superset and the title. Installed on the phone 2026-10-12, awaiting that check.
+see the superset and the title. Done 2026-10-12: Harry checked both ("these look good").
 
 ### OG-015 Import review: search the whole library for a match
-status: building
+status: done
 depends on: OG-014
 Harry's feedback: three suggestions plus "new exercise" is not enough. Each review row now has a
 "Change exercise" action that opens upstream's own library picker (search, body-part and
 equipment filters, "Create your own exercise"), opened on what trains the same muscle as the
 current match. A pick counts as reviewing the row. No new strings. Gate: on the phone, search and
-pick an exercise for a row, and the saved routine uses it.
+pick an exercise for a row, and the saved routine uses it. Done 2026-10-12: Harry checked it.
+
+### OG-025 Merge a custom exercise into another
+status: building
+Harry: the Anatoly history import made custom exercises the library already has. The import was
+a one-off, so no matching is added to it; instead any custom exercise can be merged into another
+exercise. Settings, Bring data in, "Merge custom exercises" lists them, most logged first, with
+the closest library name; a custom exercise's detail sheet has the same action. Pick a suggestion
+or search the library, confirm, and its sets, routine slots and settings move over
+(`lib/merge-exercise.js`, see DECISIONS). Gate: on the phone, merge an imported exercise and see
+its history under the library exercise.
 
 ## Phase 2: Health Connect stats
 

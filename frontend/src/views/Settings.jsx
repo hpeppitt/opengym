@@ -41,6 +41,7 @@ import { showsConnection, showsLocalLine } from '../components/SyncBanner.jsx'
 import BackupFolderRow, { useBackupFolder, autoBackupSubtitle } from '../components/BackupFolderRow.jsx'
 import GeminiKeyRow from '../components/fork/GeminiKeyRow.jsx' // fork OG-010
 import { HealthCardsRow } from '../components/fork/HealthCards.jsx' // fork OG-022
+import { MergeExercisesRow } from '../components/fork/MergeExercises.jsx' // fork OG-025
 import { ServerSyncSection, KeptChangesRows, leaveServer, connectServer, passkeySignIn } from '../components/ServerSync.jsx'
 import { passwordOn, PasswordRow, openPasswordSignIn, openPasswordRegister } from '../components/PasswordAuth.jsx'
 import { usePasskeys, PasskeysRow, DeviceLinkRow, openDeviceLinkRedeem } from '../components/Passkeys.jsx'
@@ -797,6 +798,7 @@ export default function Settings({ page = null, find = null, via = null }) {
           subtitle={t('Pull your history with a Hevy Pro API key')}
           accessory="chevron" onClick={importFromHevy} />
         {MOBILE && <GeminiKeyRow />}
+        <MergeExercisesRow />{/* fork OG-025 */}
       </Section>
       {hasMedia && <Section><MediaRow /></Section>}
       <Section>
