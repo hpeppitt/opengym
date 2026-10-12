@@ -26,6 +26,7 @@ vi.mock('../../store/useUI.js', () => {
 vi.mock('../../lib/mobile.js', () => ({ MOBILE: true }))
 vi.mock('../../lib/gemini-key.js', () => ({ getGeminiKey: vi.fn(async () => 'AIzaTest') }))
 vi.mock('./anatoly-images.js', () => ({ toImage: vi.fn(async () => ({ mimeType: 'image/jpeg', base64: 'AAAA' })) }))
+vi.mock('../../sheets.jsx', () => ({ exercisePicker: vi.fn((onPick, opts) => { mocks.pick = { onPick, opts, close: vi.fn() }; return mocks.pick }) }))
 vi.mock('../../lib/anatoly-import.js', async orig => ({ ...(await orig()), importFromImages: vi.fn() }))
 
 const { importFromImages, AnatolyImportError } = await import('../../lib/anatoly-import.js')
@@ -110,6 +111,41 @@ describe('Anatoly import sheet (OG-013)', () => {
     await click(button('Read photos'))
     await flush()
     expect(host.textContent.match(/Superset A/g)).toHaveLength(2)
+  })
+
+  it('searches the whole library for a match, beyond the three suggestions', async () => {
+    importFromImages.mockResolvedValue(ROWS)
+    await openSheet()
+    await pickPhotos()
+    await click(button('Read photos'))
+    await flush()
+    // Row 2 is the fuzzy Face pull: search instead of confirming.
+    const searches = [...host.querySelectorAll('button')].filter(b => b.textContent.trim() === 'Change exercise')
+    expect(searches).toHaveLength(3)
+    await click(searches[1])
+    expect(mocks.pick.opts).toMatchObject({ title: 'Change exercise', like: '0203' })
+    await act(async () => { mocks.pick.onPick({ id: '0334' }) })   // dumbbell lateral raise
+    expect(mocks.pick.close).toHaveBeenCalled()
+    // Choosing from the library counts as reviewing the row.
+    expect(host.textContent).not.toContain('Rows to check')
+    await click(button('Save session'))
+    const saved = mocks.S.routines.find(r => r.anatoly)
+    expect(saved.ex[1].id).toBe('0334')
+  })
+
+  it('accepts an exercise made in the picker, which the picker has already saved', async () => {
+    importFromImages.mockResolvedValue(ROWS.slice(0, 1))
+    await openSheet()
+    await pickPhotos()
+    await click(button('Read photos'))
+    await flush()
+    await click(button('Change exercise'))
+    mocks.S = { ...mocks.S, customEx: [{ id: 'cx-made', n: 'paused bench', custom: true, bp: 'chest' }] }
+    await act(async () => { mocks.pick.onPick({ id: 'cx-made', n: 'paused bench' }) })
+    await click(button('Save session'))
+    const saved = mocks.S.routines.find(r => r.anatoly)
+    expect(saved.ex[0].id).toBe('cx-made')
+    expect(mocks.S.customEx.map(c => c.id)).toEqual(['cx-made'])
   })
 
   it('titles a session by its main muscle groups and the date', () => {
