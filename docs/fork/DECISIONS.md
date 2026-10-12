@@ -59,3 +59,12 @@ Dated, append-only. One entry per decision that changes direction.
   ranked by sets, and every group with at least half the busiest one's sets is named, up to
   three. Upstream's own strings name them; 'Back' alone is upstream's navigation button, so the
   body-part string is used for back.
+- Health Connect raw reads pass DEDUPLICATION_STRATEGY_DISABLED (OG-020). connect-client
+  1.1.0-alpha12 throws NotImplementedError on Android 14 and later for any other value, including
+  its own default, and that Error crashed the app on the first sleep read on the phone. Steps,
+  calories and nutrition still deduplicate across sources because they are aggregates. The plugin
+  catches Throwable so a library Error rejects the call instead of killing the app.
+- Cardio sessions are recognised by Health Connect's real ExerciseSessionRecord codes, read off
+  the library with javap (OG-020). fit-app's numeric table is wrong for most entries; it lists 70
+  as a stair machine when 70 is strength training, so gym sessions fed fit-app's VO2 max. Noted
+  for Harry; fit-app is not changed from here.

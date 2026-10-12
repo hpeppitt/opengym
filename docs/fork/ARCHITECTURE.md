@@ -75,6 +75,10 @@ HealthReadPlugin.java  ->  lib/health-read.js  ->  pure scorers in lib/
 
 - `lib/sleep-score.js`, `lib/vo2max.js`: ports of fit-app's `utils/sleepScore.ts` and the VO2
   calculation, tests translated with them.
+- `HealthReadPlugin.java` is registered by one line in upstream's MainActivity; its seven READ
+  permissions sit in a marked block of upstream's manifest. Raw reads follow page tokens and pass
+  deduplication disabled (see DECISIONS). `lib/health-read.js` wraps it and shapes the results.
+- Cardio for VO2 max is Health Connect's real exercise-type codes, not fit-app's table.
 - Aggregate, not raw reads, for steps, calories and nutrition. Same reason as fit-app: raw reads
   double-count when Fitbit and the phone both report.
 
