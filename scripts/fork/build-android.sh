@@ -15,8 +15,10 @@ npx cap sync android
 node scripts/check-mobile-bundle.mjs
 
 if [ "${1:-}" = "--apk" ]; then
+  # JDK 21 lives in ~/Library/Java/JavaVirtualMachines (tar.gz install, no sudo); java_home finds it.
   export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
-  java -version 2>&1 | head -1
+  export ANDROID_HOME="${ANDROID_HOME:-$HOME/Library/Android/sdk}"
+  "$JAVA_HOME/bin/java" -version 2>&1 | head -1
   (cd android && ./gradlew assembleRelease)
   ls -la android/app/build/outputs/apk/release/
 fi

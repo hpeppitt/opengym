@@ -11,11 +11,15 @@ Fork to `hpeppitt/opengym`, add the kit profile via `docs/fork/`, pin Node 22 an
 application id. Gate: `bash scripts/fork/check.sh` exits 0.
 
 ### OG-002 First APK on the phone
-status: ready
-depends on: JDK 21 installed (`brew install --cask temurin@21`, needs sudo)
-`npm run build:mobile`, `./gradlew assembleRelease`, create the fork's release keystore under
-`config/` (gitignored, passwords in the password manager), zipalign, sign, `adb install`. Gate:
-the unchanged app runs on the phone beside fit-app.
+status: building
+depends on: JDK 21 (installed from the Temurin tar.gz into ~/Library/Java/JavaVirtualMachines, no sudo)
+`bash scripts/fork/build-android.sh --apk` (not `npm run build:mobile`, which needs Xcode), create
+the fork's release keystore under `config/` (gitignored, passwords in the password manager),
+zipalign, sign, `adb install`. Gate: the unchanged app runs on the phone beside fit-app.
+Done 2026-10-12: the script builds `app-release-unsigned.apk` (about 220 MB) with JDK 21 and
+the SDK at ~/Library/Android/sdk. Remaining, Harry's hands only: create the keystore and keep
+its passwords in the password manager, sign, connect the phone, install. This unblocks the
+on-device gates of OG-003, OG-010 and OG-013.
 
 ### OG-003 Disable the in-app updater
 status: done
