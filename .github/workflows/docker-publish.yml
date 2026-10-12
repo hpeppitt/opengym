@@ -23,6 +23,7 @@ permissions:
 
 jobs:
   build:
+    if: github.repository == 'DuarteSantos8/openGym'  # fork: never deploy from hpeppitt/opengym (OG-005)
     runs-on: ubuntu-latest
     strategy:
       matrix:
