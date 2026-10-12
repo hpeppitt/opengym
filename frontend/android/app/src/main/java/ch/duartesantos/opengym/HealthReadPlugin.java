@@ -17,6 +17,7 @@ import androidx.health.connect.client.records.RestingHeartRateRecord;
 import androidx.health.connect.client.records.SleepSessionRecord;
 import androidx.health.connect.client.records.StepsRecord;
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord;
+import androidx.health.connect.client.records.WeightRecord;
 import androidx.health.connect.client.request.AggregateGroupByPeriodRequest;
 import androidx.health.connect.client.request.AggregateRequest;
 import androidx.health.connect.client.request.ReadRecordsRequest;
@@ -68,6 +69,7 @@ import kotlinx.coroutines.BuildersKt;
  *   await HR.sleep({ start, end });          // epoch ms: { sessions: [{ start, end, origin, stages: [{ stage, start, end }] }] }
  *   await HR.restingHeartRate({ start, end });  // { readings: [{ time, bpm, origin }] }
  *   await HR.exerciseSessions({ start, end });  // { sessions: [{ start, end, type, title, origin, maxHr }] }
+ *   await HR.weights({ start, end });         // { weights: [{ time, kg, origin }] }
  */
 @CapacitorPlugin(name = "HealthRead")
 public class HealthReadPlugin extends Plugin {
@@ -82,6 +84,10 @@ public class HealthReadPlugin extends Plugin {
         { "restingHeartRate", "android.permission.health.READ_RESTING_HEART_RATE" },
         { "heartRate", "android.permission.health.READ_HEART_RATE" },
         { "exercise", "android.permission.health.READ_EXERCISE" },
+        { "weight", "android.permission.health.READ_WEIGHT" },
+        // Without this, Health Connect returns nothing older than 30 days before the first grant,
+        // and a weight backfill would stop there (OG-024).
+        { "history", "android.permission.health.READ_HEALTH_DATA_HISTORY" },
     };
     private static final int PAGE = 1000;
 
@@ -297,6 +303,36 @@ public class HealthReadPlugin extends Plugin {
                 }
                 JSObject out = new JSObject();
                 out.put("sessions", sessions);
+                call.resolve(out);
+            } catch (SecurityException e) {
+                call.reject(e.getMessage(), "permission");
+            } catch (Throwable e) {
+                call.reject(e.getMessage(), "failed");
+            }
+        });
+    }
+
+    /** Weigh-ins, every source but this app (openGym writes its own weigh-ins to Health Connect). */
+    @PluginMethod
+    public void weights(PluginCall call) {
+        if (!available(call)) return;
+        Instant[] range = range(call);
+        if (range == null) return;
+        String self = getContext().getPackageName();
+        worker.execute(() -> {
+            try {
+                JSArray weights = new JSArray();
+                for (WeightRecord w : readAll(WeightRecord.class, range[0], range[1])) {
+                    String origin = w.getMetadata().getDataOrigin().getPackageName();
+                    if (self.equals(origin)) continue;
+                    JSObject o = new JSObject();
+                    o.put("time", w.getTime().toEpochMilli());
+                    o.put("kg", w.getWeight().getKilograms());
+                    o.put("origin", origin);
+                    weights.put(o);
+                }
+                JSObject out = new JSObject();
+                out.put("weights", weights);
                 call.resolve(out);
             } catch (SecurityException e) {
                 call.reject(e.getMessage(), "permission");

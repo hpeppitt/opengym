@@ -76,3 +76,7 @@ Dated, append-only. One entry per decision that changes direction.
   deleted: upstream edits them in nearly every release, and deleted files would turn each of those
   edits into a modify/delete conflict. The locale check still passes because it compares the
   locale files with each other.
+- Body weight is backfilled from Health Connect into upstream's own body weight history (OG-024),
+  not kept apart, so the existing card, chart and Stats show it. A weigh-in logged in openGym
+  always wins: the merge only fills dates that have none. Weigh-ins openGym wrote to Health
+  Connect are skipped, under any of its app ids, so nothing comes back in twice.

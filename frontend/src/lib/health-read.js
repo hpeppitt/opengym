@@ -133,3 +133,28 @@ export function ageFrom(birthYear, now = new Date()) {
   const age = now.getFullYear() - y
   return Number.isInteger(y) && age >= 10 && age <= 110 ? age : null
 }
+
+export const readWeights = (start, end) => call('weights', { start, end }).then(r => r.weights || [])
+
+const LB = 0.45359237
+// Weigh-ins openGym wrote itself (upstream's Health Connect sync), under any of its app ids. The
+// plugin already skips its own; this also skips the release app's and upstream's, which a test
+// build would otherwise read back as Fitbit-style weigh-ins.
+const OWN = /^(com\.hpeppitt\.opengym|ch\.duartesantos\.opengym)(\.|$)/
+
+/**
+ * Health Connect weigh-ins as body weight entries ({ d, w, t }, the shape upstream stores and
+ * mergeImport takes): one per local day, the last reading of that day, in the profile's unit to
+ * one decimal. Readings outside 20-400 kg are dropped as broken.
+ */
+export function weighInsFromRecords(records, unit = 'kg') {
+  const byDay = new Map()
+  for (const r of records || []) {
+    const kg = Number(r?.kg), t = Number(r?.time)
+    if (!Number.isFinite(kg) || kg < 20 || kg > 400 || !Number.isFinite(t) || OWN.test(r?.origin || '')) continue
+    const d = localDate(t)
+    const prev = byDay.get(d)
+    if (!prev || t > prev.t) byDay.set(d, { d, t, w: Math.round((unit === 'lb' ? kg / LB : kg) * 10) / 10 })
+  }
+  return [...byDay.values()].sort((a, b) => (a.d < b.d ? -1 : 1))
+}
