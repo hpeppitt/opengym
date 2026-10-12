@@ -10,6 +10,7 @@ import {
 } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
 import { Button, Row, Section, Segmented } from '../components/ui.jsx'
+import AnatolyImportButton from '../components/fork/AnatolyImport.jsx' // fork OG-013
 import SwipeRow from '../components/SwipeRow.jsx'
 import { copyRoutine, deleteRoutine, restoreRoutine, routineSnapshot } from '../lib/routines.js'
 import { workoutControls } from '../lib/workout-controls.js'
@@ -164,6 +165,7 @@ export default function Plan() {
     <div className="hdr">
       <div><h1>{t('Plan')}</h1><div className="sub">{mode === 'rotation' ? t('Your routines in a loop') : t('Your weekly routine')}</div></div>
       <div className="hdr-actions">
+        <AnatolyImportButton />
         {showCoach && <Button size="sm" variant="tinted" icon="sparkles" onClick={() => nav('/coach')}>{t('Coach')}</Button>}
         <button className="iconbtn" onClick={openMenu} aria-label={t('Plan options')} title={t('Plan options')}><Icon name="share" /></button>
       </div>

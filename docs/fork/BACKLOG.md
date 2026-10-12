@@ -83,10 +83,17 @@ review step. Threshold 0.65, not fit-app's 0.6 (see DECISIONS). DB, BB and KB ar
 shape and id scheme. 17 tests against the real catalogue.
 
 ### OG-013 Import sheet and date pin
-status: ready
+status: building
 depends on: OG-012
 Settings or Plan entry: pick photos, review rows, choose a date, save as a routine pinned via
 `dayPlan`. Gate: run-and-verify on device with a real Anatoly screenshot.
+Built: an Import button in the Plan header (phone builds), `components/fork/AnatolyImport.jsx`.
+Pick photos and a day (today or later), Gemini reads them, every fuzzy row must be confirmed or
+changed before Save. `lib/anatoly-routine.js` builds the routine, one per day, replaced on
+re-import and tidied away when Plan opens after its day has passed. Missing numbers take
+upstream's defaults and the exercise note says so. Tests: 15 for the routine logic, 3 for the
+sheet end to end. Remaining: the on-device run with a real screenshot, which needs OG-002's APK
+and a saved key.
 
 ## Phase 2: Health Connect stats
 

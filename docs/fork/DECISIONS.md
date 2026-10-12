@@ -44,3 +44,9 @@ Dated, append-only. One entry per decision that changes direction.
   catalogue, "Barbell back squat" scored exactly 0.6 against upstream's pick, a camera-angle
   variant ("barbell full squat (back pov)"), and was accepted without asking. A fuzzy row costs
   one tap to confirm; a wrong exact row files history under the wrong lift.
+- Imported Anatoly sessions are kept as one routine per date, replaced if that date is
+  imported again, and removed once the date has passed (Harry's call, OG-013). The routine list
+  never fills up, and History keeps every logged set. The import starts from a button in the
+  Plan header, where routines and the schedule live (Harry's call). Numbers the photo did not
+  show take upstream's defaults, and the exercise note names them, because a routine cannot
+  hold a null.
