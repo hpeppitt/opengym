@@ -125,3 +125,56 @@ describe('saving and tidying imported sessions (one per day, gone once the day h
     expect(staleImportedRoutines(s, '2026-10-12')).toEqual(['again'])
   })
 })
+
+import { mainMuscleGroups } from './anatoly-routine.js'
+
+describe('supersets from the photo (feedback after OG-013)', () => {
+  const r = (id, g) => row({ exerciseId: id, sets: 3, reps: 10, supersetGroup: g })
+
+  it('links adjacent rows of one group with a shared sg, and leaves the rest alone', () => {
+    const { ex } = buildRoutine([r(BENCH, null), r(PULLUP, 'A'), r('0294', 'A'), r('0334', null)])
+    expect(ex[0].sg).toBeUndefined()
+    expect(ex[1].sg).toBeTruthy()
+    expect(ex[2].sg).toBe(ex[1].sg)
+    expect(ex[3].sg).toBeUndefined()
+  })
+
+  it('drops a group left with one member, as upstream does', () => {
+    const { ex } = buildRoutine([r(BENCH, 'A'), r(PULLUP, null), r('0294', 'B'), r('0334', 'B')])
+    expect(ex[0].sg).toBeUndefined()
+    expect(ex[2].sg).toBe(ex[3].sg)
+  })
+
+  it('keeps two groups with the same label apart when they are not next to each other', () => {
+    const { ex } = buildRoutine([r(BENCH, 'A'), r(PULLUP, 'A'), r('0294', null), r('0334', 'A'), r('0025', 'A')])
+    expect(ex[0].sg).toBe(ex[1].sg)
+    expect(ex[3].sg).toBe(ex[4].sg)
+    expect(ex[3].sg).not.toBe(ex[0].sg)
+  })
+
+  it('a row dropped for having no exercise does not join the groups around it', () => {
+    const { ex } = buildRoutine([r(BENCH, 'A'), row({ exerciseId: null, supersetGroup: 'A' }), r(PULLUP, 'A')])
+    expect(ex).toHaveLength(2)
+    expect(ex[0].sg).toBe(ex[1].sg)
+  })
+})
+
+describe('mainMuscleGroups (session title)', () => {
+  const bp = { c1: 'chest', c2: 'chest', a1: 'upper arms', a2: 'lower arms', s1: 'shoulders', l1: 'upper legs', l2: 'lower legs', w: 'waist' }
+  const ex = (...pairs) => pairs.map(([id, sets]) => ({ id, sets }))
+  const bpOf = id => bp[id]
+
+  it('ranks by sets and keeps groups with at least half the busiest one\'s sets', () => {
+    // chest 9, arms 6, shoulders 3: shoulders is under half of 9
+    expect(mainMuscleGroups(ex(['c1', 5], ['c2', 4], ['a1', 3], ['a2', 3], ['s1', 3]), bpOf)).toEqual(['chest', 'arms'])
+  })
+
+  it('folds upper and lower body parts into one group and names at most three', () => {
+    expect(mainMuscleGroups(ex(['l1', 4], ['l2', 4], ['w', 4], ['c1', 4], ['s1', 4]), bpOf)).toEqual(['legs', 'core', 'chest'])
+  })
+
+  it('counts an exercise with no sets as one, and ignores unknown body parts', () => {
+    expect(mainMuscleGroups(ex(['c1', 0], ['zz', 9]), bpOf)).toEqual(['chest'])
+    expect(mainMuscleGroups([], bpOf)).toEqual([])
+  })
+})

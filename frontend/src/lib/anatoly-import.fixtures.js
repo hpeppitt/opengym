@@ -42,3 +42,18 @@ export const envelope = (text, finishReason = 'STOP') => ({
   candidates: [{ finishReason, content: { role: 'model', parts: [{ text: 'Reading the rows…', thought: true }, { text }] } }],
   usageMetadata: { promptTokenCount: 1800, candidatesTokenCount: 420, thoughtsTokenCount: 900 },
 })
+
+// Supersets as a model reports them: a letter, the same letter in lower case, a number, and an
+// empty label that means no group.
+export const SUPERSETS = JSON.stringify({
+  imageReadable: true,
+  exercises: [
+    { sourceText: 'Bench press', sets: 4, reps: 6, supersetGroup: null },
+    { sourceText: 'Incline dumbbell press', sets: 3, reps: 10, supersetGroup: 'A' },
+    { sourceText: 'Cable fly', sets: 3, reps: 12, supersetGroup: 'a ' },
+    { sourceText: 'Triceps pushdown', sets: 3, reps: 12, supersetGroup: 1 },
+    { sourceText: 'Overhead triceps extension', sets: 3, reps: 12, supersetGroup: '1' },
+    { sourceText: 'Lateral raise', sets: 3, reps: 15, supersetGroup: '' },
+    { sourceText: 'Plank', sets: 3, timeSeconds: 45 },
+  ],
+})

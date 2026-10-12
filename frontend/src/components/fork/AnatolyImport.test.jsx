@@ -29,13 +29,14 @@ vi.mock('./anatoly-images.js', () => ({ toImage: vi.fn(async () => ({ mimeType: 
 vi.mock('../../lib/anatoly-import.js', async orig => ({ ...(await orig()), importFromImages: vi.fn() }))
 
 const { importFromImages, AnatolyImportError } = await import('../../lib/anatoly-import.js')
-const { default: AnatolyImportButton } = await import('./AnatolyImport.jsx')
-const { todayISO } = await import('../../lib/format.js')
+const { default: AnatolyImportButton, sessionTitle } = await import('./AnatolyImport.jsx')
+const { todayISO, fmtDate } = await import('../../lib/format.js')
+const { EXIDX } = await import('../../lib/exercises.js')
 
 const ROWS = [
   { sourceText: 'Barbell bench press', sets: 5, reps: 5, repsMax: null, targetWeight: 70, weightUnit: 'kg', timeSeconds: null, notes: null },
-  { sourceText: 'Face pull', sets: 3, reps: 15, repsMax: null, targetWeight: null, weightUnit: null, timeSeconds: null, notes: null },
-  { sourceText: 'Farmer carry', sets: 2, reps: null, repsMax: null, targetWeight: 32, weightUnit: 'kg', timeSeconds: 40, notes: null },
+  { sourceText: 'Face pull', sets: 3, reps: 15, repsMax: null, targetWeight: null, weightUnit: null, timeSeconds: null, notes: null, supersetGroup: 'A' },
+  { sourceText: 'Farmer carry', sets: 2, reps: null, repsMax: null, targetWeight: 32, weightUnit: 'kg', timeSeconds: 40, notes: null, supersetGroup: 'A' },
 ]
 
 let host, root
@@ -92,6 +93,30 @@ describe('Anatoly import sheet (OG-013)', () => {
     expect(saved.ex[2].id).toBe(mocks.S.customEx[0].id)
     expect(mocks.S.routines[0].id).toBe('mine')
     expect(mocks.closed).toBe(true)
+
+    // Feedback after OG-013: the photo's superset survives, and the title names the muscles.
+    expect(saved.ex[1].sg).toBeTruthy()
+    expect(saved.ex[2].sg).toBe(saved.ex[1].sg)
+    expect(saved.ex[0].sg).toBeUndefined()
+    expect(saved.name).toBe(sessionTitle(saved.ex, id => EXIDX[id]?.bp || mocks.S.customEx.find(c => c.id === id)?.bp, iso))
+    expect(saved.name.endsWith(' · ' + fmtDate(iso))).toBe(true)
+    expect(saved.name).not.toMatch(/^Anatoly/)
+  })
+
+  it('shows the superset on the review rows', async () => {
+    importFromImages.mockResolvedValue(ROWS)
+    await openSheet()
+    await pickPhotos()
+    await click(button('Read photos'))
+    await flush()
+    expect(host.textContent.match(/Superset A/g)).toHaveLength(2)
+  })
+
+  it('titles a session by its main muscle groups and the date', () => {
+    const bp = { b1: 'chest', b2: 'upper arms', b3: 'back' }
+    expect(sessionTitle([{ id: 'b1', sets: 4 }, { id: 'b2', sets: 4 }], id => bp[id], '2026-10-14')).toBe('Chest & Arms · ' + fmtDate('2026-10-14'))
+    expect(sessionTitle([{ id: 'b3', sets: 4 }, { id: 'b1', sets: 4 }, { id: 'b2', sets: 4 }], id => bp[id], '2026-10-14')).toBe('Back, Chest & Arms · ' + fmtDate('2026-10-14'))
+    expect(sessionTitle([{ id: 'x', sets: 3 }], () => undefined, '2026-10-14')).toBe('Anatoly · ' + fmtDate('2026-10-14'))
   })
 
   it('says what went wrong in words, by error code', async () => {

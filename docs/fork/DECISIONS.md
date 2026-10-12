@@ -54,3 +54,8 @@ Dated, append-only. One entry per decision that changes direction.
   into a pure `estimateVo2Max()` that takes the readings as input (OG-021). fit-app's tests for
   that function covered only the reads, so the formula got new tests worked by hand rather than
   translated ones.
+- An imported session is titled by its main muscle groups and the date (Harry's feedback,
+  OG-014): body parts are folded into chest, back, shoulders, arms, legs, core, cardio and neck,
+  ranked by sets, and every group with at least half the busiest one's sets is named, up to
+  three. Upstream's own strings name them; 'Back' alone is upstream's navigation button, so the
+  body-part string is used for back.

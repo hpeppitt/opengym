@@ -3,7 +3,7 @@ import {
   parseImportResponse, extractJsonBlock, readCandidate, buildRequest, buildImportPrompt,
   importFromImages, AnatolyImportError, ANATOLY_MODEL, MAX_OUTPUT_TOKENS,
 } from './anatoly-import.js'
-import { CLEAN, FENCED, TRUNCATED, TRUNCATED_INNER, UNREADABLE, NO_EXERCISES, MESSY, envelope } from './anatoly-import.fixtures.js'
+import { SUPERSETS, CLEAN, FENCED, TRUNCATED, TRUNCATED_INNER, UNREADABLE, NO_EXERCISES, MESSY, envelope } from './anatoly-import.fixtures.js'
 
 const codeOf = fn => { try { fn(); return null } catch (e) { expect(e).toBeInstanceOf(AnatolyImportError); return e.code } }
 const codeOfAsync = async p => { try { await p; return null } catch (e) { expect(e).toBeInstanceOf(AnatolyImportError); return e.code } }
@@ -12,7 +12,7 @@ describe('parseImportResponse', () => {
   it('reads a clean session into rows, in order', () => {
     const rows = parseImportResponse(CLEAN)
     expect(rows.map(r => r.sourceText)).toEqual(['Barbell back squat', 'Romanian deadlift', 'Standing low cable row', 'Plank', 'Dead hang'])
-    expect(rows[0]).toEqual({ sourceText: 'Barbell back squat', sets: 4, reps: 6, repsMax: 8, targetWeight: 100, weightUnit: 'kg', timeSeconds: null, notes: 'Rest 3 min' })
+    expect(rows[0]).toEqual({ sourceText: 'Barbell back squat', sets: 4, reps: 6, repsMax: 8, targetWeight: 100, weightUnit: 'kg', timeSeconds: null, notes: 'Rest 3 min', supersetGroup: null })
   })
 
   it('keeps an unweighted row unweighted rather than inventing a weight', () => {
@@ -28,7 +28,7 @@ describe('parseImportResponse', () => {
   })
 
   it('strips a markdown fence', () => {
-    expect(parseImportResponse(FENCED)).toEqual([{ sourceText: 'Bench press', sets: 5, reps: 5, repsMax: null, targetWeight: 70, weightUnit: 'kg', timeSeconds: null, notes: null }])
+    expect(parseImportResponse(FENCED)).toEqual([{ sourceText: 'Bench press', sets: 5, reps: 5, repsMax: null, targetWeight: 70, weightUnit: 'kg', timeSeconds: null, notes: null, supersetGroup: null }])
   })
 
   it('reports a truncated answer as truncation, not as a parser failure (fit-app FIT-091)', () => {
@@ -87,6 +87,16 @@ describe('parseImportResponse', () => {
     it('ignores a duration on a row that has reps', () => {
       expect(rows[4]).toMatchObject({ reps: 20, timeSeconds: null, targetWeight: 32 })
     })
+  })
+
+  it('reads superset groups and normalises their labels (feedback after OG-013)', () => {
+    const rows = parseImportResponse(SUPERSETS)
+    expect(rows.map(r => r.supersetGroup)).toEqual([null, 'A', 'A', '1', '1', null, null])
+  })
+
+  it('asks for superset groups in the prompt', () => {
+    expect(buildImportPrompt()).toMatch(/"supersetGroup"/)
+    expect(buildImportPrompt()).toMatch(/A1\/A2/)
   })
 
   it('throws empty when every row lacked a name', () => {

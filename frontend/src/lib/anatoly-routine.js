@@ -8,7 +8,7 @@
 // invent them; a plan here cannot hold a null, so the gap is filled with upstream's own
 // defaultConfig() and the exercise note says which numbers were not in the photo. Nothing is
 // filled silently.
-import { defaultConfig, NOTE_MAX } from './history.js'
+import { defaultConfig, cleanupSg, NOTE_MAX } from './history.js'
 import { isCardio } from './exercises.js'
 import { LB_TO_KG } from './recovery.js'
 import { uid } from './format.js'
@@ -50,15 +50,42 @@ export function exerciseConfig(row, { unit = 'kg' } = {}) {
   return { cfg, missing }
 }
 
-/** A routine from reviewed rows: { id, name, emoji, ex, anatoly: { date } }. */
+/**
+ * A routine from reviewed rows: { id, name, emoji, ex, anatoly: { date } }. Rows the photo
+ * showed as one superset (same `supersetGroup`, next to each other) share an `sg` id, the way
+ * upstream links a superset; upstream's cleanupSg drops a group left with one member.
+ */
 export function buildRoutine(rows, { name, date, unit = 'kg' } = {}) {
-  return {
-    id: uid(),
-    name: String(name || '').trim() || 'Anatoly',
-    emoji: 'figureStrength',
-    anatoly: { date: date || null },
-    ex: (rows || []).filter(r => r.exerciseId).map(r => exerciseConfig(r, { unit }).cfg),
+  const id = uid()
+  const kept = (rows || []).filter(r => r.exerciseId)
+  const ex = kept.map((r, i) => {
+    const { cfg } = exerciseConfig(r, { unit })
+    if (r.supersetGroup) cfg.sg = `an-${id}-${r.supersetGroup}-${runStart(kept, i)}`
+    return cfg
+  })
+  cleanupSg(ex)
+  return { id, name: String(name || '').trim() || 'Anatoly', emoji: 'figureStrength', anatoly: { date: date || null }, ex }
+}
+// Where the run of same-group rows containing row i starts, so a label reused further down the
+// list makes a second superset rather than joining the first.
+const runStart = (rows, i) => { while (i > 0 && rows[i - 1].supersetGroup === rows[i].supersetGroup) i--; return i }
+
+// Body parts folded into the groups a title names; the labels are upstream's own strings.
+const GROUP_OF = { chest: 'chest', back: 'back', shoulders: 'shoulders', 'upper arms': 'arms', 'lower arms': 'arms', 'upper legs': 'legs', 'lower legs': 'legs', waist: 'core', cardio: 'cardio', neck: 'neck' }
+
+/**
+ * The muscle groups a routine mainly trains, by sets: every group with at least half the sets of
+ * the busiest one, at most three, busiest first. `bpOf(id)` is the exercise's body part.
+ */
+export function mainMuscleGroups(ex, bpOf) {
+  const sets = new Map()
+  for (const e of ex || []) {
+    const g = GROUP_OF[bpOf(e.id)]
+    if (g) sets.set(g, (sets.get(g) || 0) + (e.sets || 1))
   }
+  const ranked = [...sets].sort((a, b) => b[1] - a[1])
+  if (!ranked.length) return []
+  return ranked.filter(([, n]) => n >= ranked[0][1] / 2).slice(0, 3).map(([g]) => g)
 }
 
 // Routines this import made carry `anatoly: { date }`. One per date: importing the same day

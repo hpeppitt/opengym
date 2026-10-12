@@ -99,6 +99,16 @@ upstream's defaults and the exercise note says so. Tests: 15 for the routine log
 sheet end to end. Remaining: the on-device run with a real screenshot, which needs OG-002's APK
 and a saved key.
 
+### OG-014 Import feedback: session title and supersets
+status: building
+depends on: OG-013
+Harry's feedback from the first device run. (1) Title an imported session by the main muscle
+groups it trains and the date ("Chest & Arms · 14 Oct"): groups ranked by sets, every group with
+at least half the busiest one's sets, at most three. (2) Supersets in the photo were lost: the
+prompt now asks for a `supersetGroup` per exercise, linked rows become an upstream superset (a
+shared `sg`), and the review rows show it. Gate: re-import the same screenshot on the phone and
+see the superset and the title. Installed on the phone 2026-10-12, awaiting that check.
+
 ## Phase 2: Health Connect stats
 
 ### OG-020 `HealthReadPlugin.java` with read permissions
