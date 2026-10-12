@@ -179,7 +179,7 @@ openGym (attaching its time, heart rate and calories) or logged as a cardio work
 gate to settle when picked up.
 
 ### OG-024 Body weight backfill from Health Connect
-status: building
+status: done
 depends on: OG-020
 Harry: body weight did not backfill. Nothing read it: upstream's Health Connect link only writes
 weigh-ins out. The read plugin now asks for READ_WEIGHT and READ_HEALTH_DATA_HISTORY (without
@@ -187,7 +187,8 @@ which Health Connect returns nothing older than 30 days before the grant) and re
 from every source but openGym itself. The Home card backfills once per session: one weigh-in per
 day, the last of the day, ten years back, merged with upstream's mergeImport so a weigh-in logged
 in openGym is never replaced. Until weight is granted the card shows "Import body weight".
-Remaining: Harry grants weight on the phone; check the body weight card fills.
+Done 2026-10-12: Harry granted weight on the phone; 294 weigh-ins backfilled, one per day,
+19 Nov 2024 to 12 Oct 2026.
 
 ## Phase 3: Migrate and retire fit-app
 
