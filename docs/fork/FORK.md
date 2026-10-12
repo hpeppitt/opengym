@@ -41,6 +41,7 @@ bash scripts/fork/build-android.sh --apk          # ... then Gradle assembleRele
 # Do not use `npm run build:mobile` here: it syncs iOS too and fails without Xcode.
 
 git fetch upstream && git merge upstream/main     # take an upstream release (merge, never rebase)
+bash scripts/fork/upstream-sync.sh [ref] [report] # merge + gate dry run; use a scratch branch
 ```
 
 ## Hard rules

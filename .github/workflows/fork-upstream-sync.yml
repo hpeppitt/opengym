@@ -1,0 +1,75 @@
+# Fork only (hpeppitt/opengym, OG-004). Weekly: merge upstream/main on a throwaway branch, run the
+# fork's gate on the result, and report in one rolling issue labelled upstream-sync. Never
+# touches main. The gate runs here rather than in test.yml because a push or PR made with the
+# workflow token does not trigger other workflows.
+name: Fork upstream sync
+
+on:
+  schedule:
+    - cron: '0 20 * * 0'   # Sunday 20:00 UTC, Monday morning in Sydney
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: fork-upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'hpeppitt/opengym'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Fetch upstream
+        run: |
+          git remote add upstream https://github.com/DuarteSantos8/openGym.git
+          git fetch --no-tags upstream main
+          git fetch --tags upstream
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b fork/upstream-sync
+      - name: Merge and gate
+        id: sync
+        run: bash scripts/fork/upstream-sync.sh upstream/main "$RUNNER_TEMP/report.md"
+      - name: Push the merge branch
+        if: steps.sync.outputs.status == 'pass' || steps.sync.outputs.status == 'fail'
+        run: |
+          # The workflow token cannot push commits that change .github/workflows. When upstream
+          # touched a workflow, say so and leave the merge to be done locally.
+          if git push -f origin HEAD:refs/heads/fork/upstream-sync; then
+            printf '\n[Open a pull request](%s/compare/main...fork/upstream-sync?expand=1) from `fork/upstream-sync`.\n' \
+              "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" >> "$RUNNER_TEMP/report.md"
+          else
+            printf '\nThe merge branch could not be pushed, most likely because upstream changed a workflow file. Merge locally:\n\n```bash\ngit fetch upstream && git checkout -b fork/upstream-merge main && git merge upstream/main\n```\n' >> "$RUNNER_TEMP/report.md"
+          fi
+      - name: Report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ steps.sync.outputs.status }}
+        run: |
+          printf '\n_Run: %s/actions/runs/%s_\n' "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> "$RUNNER_TEMP/report.md"
+          open=$(gh issue list --label upstream-sync --state open --json number --jq '.[0].number // empty')
+          if [ "$STATUS" = current ]; then
+            if [ -n "$open" ]; then gh issue close "$open" --comment "The fork now contains upstream/main. Closing."; fi
+            exit 0
+          fi
+          gh label create upstream-sync --color 0E8A16 --description 'Weekly upstream merge check' --force
+          if [ -n "$open" ]; then
+            gh issue edit "$open" --body-file "$RUNNER_TEMP/report.md"
+            gh issue comment "$open" --body "Updated: $STATUS. See the issue body."
+          else
+            gh issue create --title 'Upstream sync' --label upstream-sync --body-file "$RUNNER_TEMP/report.md"
+          fi
+      - name: Fail the run unless the merge is clean and green
+        if: steps.sync.outputs.status == 'conflict' || steps.sync.outputs.status == 'fail'
+        run: |
+          echo "Upstream sync: ${{ steps.sync.outputs.status }}. See the upstream-sync issue."
+          exit 1

@@ -14,6 +14,20 @@ upstream's own tests see upstream's behaviour unchanged.
   Settings row never offers upstream's APK (OG-003). Tested in `lib/fork.test.js`.
 - Further fork-only behaviour should gate on the same flag rather than add new ones.
 
+## Upstream sync check (Phase 0)
+
+```
+weekly cron / dispatch  ->  .github/workflows/fork-upstream-sync.yml  (skips outside hpeppitt/opengym)
+  ->  scripts/fork/upstream-sync.sh upstream/main
+        current | conflict (merge aborted, files listed) | fail (gate tail) | pass
+  ->  push fork/upstream-sync when the merge is clean
+  ->  one open issue labelled upstream-sync, body replaced each run, closed when current
+```
+
+- No upstream file is touched. The script is runnable by hand in a scratch worktree with any ref.
+- The workflow token cannot push commits that change `.github/workflows`; when upstream edits a
+  workflow, the issue says to merge locally instead.
+
 ## Anatoly import (Phase 1)
 
 ```
