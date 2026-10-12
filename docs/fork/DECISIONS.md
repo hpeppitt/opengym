@@ -80,3 +80,10 @@ Dated, append-only. One entry per decision that changes direction.
   not kept apart, so the existing card, chart and Stats show it. A weigh-in logged in openGym
   always wins: the merge only fills dates that have none. Weigh-ins openGym wrote to Health
   Connect are skipped, under any of its app ids, so nothing comes back in twice.
+- Custom exercises can be merged into another exercise (Harry's call, OG-025), rather than the
+  history importer learning to match: the Anatoly history was a one-off import. A merge moves
+  every logged set, routine slot, favourite and per-exercise setting, then deletes the custom
+  exercise. Where both have a setting (start weight, note, bar weight, loading), the target's is
+  kept. Records are rebuilt the way a moved workout's are: a badge the merged sets now beat is
+  taken away, none is handed out. Only exercises logged the same way can merge, since sets move
+  as they are. There is no undo; the confirm step says so.

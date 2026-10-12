@@ -58,6 +58,10 @@ photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from sec
   upstream's `secureGet`/`secureSet` in `lib/coach-secrets.js`. Its Settings row is
   `components/fork/GeminiKeyRow.jsx`, hooked into upstream's Settings by an import and one line
   under Data & backup, Bring data in. Shown on phone builds only.
+- Merging custom exercises (OG-025): `lib/merge-exercise.js` is the pure merge,
+  `components/fork/MergeExercises.jsx` the UI. Two one-line hooks: a row under Settings, Bring
+  data in, listing every custom exercise with its closest library name (OG-012's matcher), and a
+  Merge button on a custom exercise's detail sheet in upstream's `sheets.jsx`.
 - Fork UI strings are English only and live in the code as `t()` keys; no locale file carries a
   fork string (OG-016), so upstream's locale files and their tests are untouched.
 
