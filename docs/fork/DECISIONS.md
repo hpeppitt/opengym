@@ -24,3 +24,7 @@ Dated, append-only. One entry per decision that changes direction.
   Sydney time showed 565 then 7 spurious failures.
 - fit-app history migrates from Firestore (the durable archive) into openGym's CSV import, not
   from the phone's SQLite, which release builds cannot read via `run-as`.
+- The in-app updater is disabled by a build-time `VITE_FORK=1` flag (`lib/fork.js`), not a
+  constant that is always on. A constant would have failed upstream's own updater tests unless
+  the fork edited their test file too; the flag keeps the upstream touch to two lines in
+  `lib/update.js`. The flag is set in `scripts/fork/build-android.sh` (OG-003).

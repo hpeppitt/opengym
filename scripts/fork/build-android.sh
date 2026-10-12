@@ -9,7 +9,7 @@ NODE22=/opt/homebrew/opt/node@22/bin
 if [ -x "$NODE22/node" ]; then export PATH="$NODE22:$PATH"; fi
 
 cd frontend
-VITE_MOBILE=1 npx vite build
+VITE_MOBILE=1 VITE_FORK=1 npx vite build
 node ../scripts/catalogue/stage-media.mjs dist
 npx cap sync android
 node scripts/check-mobile-bundle.mjs

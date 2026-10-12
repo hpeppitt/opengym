@@ -18,7 +18,7 @@ depends on: JDK 21 installed (`brew install --cask temurin@21`, needs sudo)
 the unchanged app runs on the phone beside fit-app.
 
 ### OG-003 Disable the in-app updater
-status: ready
+status: done
 `lib/update.js` polls `DuarteSantos8/openGym` releases and offers the APK. With our own id the
 install would fail, but the prompt is noise. Make the check a no-op when the build is the fork
 (a `VITE_FORK=1` flag or a repo constant), keeping the edit to upstream's file to a guard line.

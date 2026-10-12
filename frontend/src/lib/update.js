@@ -10,6 +10,7 @@
 // against its SHA-256 by the native Install plugin and handed to the system installer.
 
 import { MOBILE } from './mobile.js'
+import { FORK } from './fork.js'
 
 const REPO = 'DuarteSantos8/openGym'
 const LATEST_URL = `https://api.github.com/repos/${REPO}/releases/latest`
@@ -51,6 +52,7 @@ function compareSemver(a, b) {
 let cached = null
 export function resetUpdateCheck() { cached = null }
 export async function checkForUpdate() {
+  if (FORK) return { hasUpdate: false, latestVersion: __APP_VERSION__, apkUrl: null, hashUrl: null } // fork: upstream's APK cannot install over our application id
   if (!cached) cached = fetchLatest().catch(e => { cached = null; throw e })
   return cached
 }

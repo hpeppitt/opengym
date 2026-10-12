@@ -3,6 +3,17 @@
 Upstream's `CLAUDE.md` describes the app. This file describes only the seams the fork introduces.
 Every entry names the new file and the single upstream touch point it hangs off.
 
+## Fork build flag (Phase 0)
+
+`lib/fork.js` exports `FORK`, true only when the build sets `VITE_FORK=1`.
+`scripts/fork/build-android.sh` sets it; upstream's builds and the test runner do not, so
+upstream's own tests see upstream's behaviour unchanged.
+
+- Touch point: one import and one guard line at the top of `checkForUpdate()` in upstream's
+  `lib/update.js`. Under the flag the check answers "no update" without calling GitHub, so the
+  Settings row never offers upstream's APK (OG-003). Tested in `lib/fork.test.js`.
+- Further fork-only behaviour should gate on the same flag rather than add new ones.
+
 ## Anatoly import (Phase 1)
 
 ```
