@@ -13,10 +13,11 @@ import { deleteRoutine } from '../../lib/routines.js'
 import { getGeminiKey } from '../../lib/gemini-key.js'
 import { importFromImages } from '../../lib/anatoly-import.js'
 import { matchRows, resolveRows } from '../../lib/anatoly-match.js'
-import { buildRoutine, saveImportedSession, staleImportedRoutines, tidyImportedRoutines } from '../../lib/anatoly-routine.js'
+import { buildRoutine, mainMuscleGroups, saveImportedSession, staleImportedRoutines, tidyImportedRoutines } from '../../lib/anatoly-routine.js'
 import { useStore } from '../../store/useStore.js'
 import { useUI } from '../../store/useUI.js'
 import { Button, Row, SelectRow } from '../ui.jsx'
+import Icon from '../Icon.jsx'
 import { toImage } from './anatoly-images.js'
 
 export default function AnatolyImportButton() {
@@ -57,6 +58,20 @@ function rowSummary(r) {
 }
 
 const CUSTOM = 'custom'
+
+// Upstream's labels for each group. Back reads the body part's string: 'Back' alone is the
+// navigation button ("Zurück"), not the muscle.
+const cap = s => (s ? s.charAt(0).toLocaleUpperCase() + s.slice(1) : s)
+const GROUP_LABEL = {
+  chest: () => t('Chest'), back: () => cap(t('back')), shoulders: () => t('Shoulders'), arms: () => t('Arms'),
+  legs: () => t('Legs'), core: () => t('Core'), cardio: () => t('Cardio'), neck: () => t('Neck'),
+}
+/** "Chest & Arms · 14 Oct": the main muscle groups and the day; the day alone when none is known. */
+export function sessionTitle(ex, bpOf, date) {
+  const names = mainMuscleGroups(ex, bpOf).map(g => GROUP_LABEL[g]())
+  const groups = names.length > 1 ? names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1] : names[0]
+  return (groups ? groups + ' · ' : 'Anatoly · ') + fmtDate(date)
+}
 const nameOf = id => exerciseNameText(exOr(id))
 
 function AnatolyImportSheet({ close }) {
@@ -95,7 +110,9 @@ function AnatolyImportSheet({ close }) {
       ? { ...r, accepted: false }
       : { ...r, exerciseId: choice[i], exerciseName: EXIDX[choice[i]]?.n ?? r.exerciseName, accepted: true }))
     const resolved = resolveRows(reviewed, { customEx: S.customEx || [] })
-    const routine = buildRoutine(resolved.rows, { name: 'Anatoly · ' + fmtDate(date), date, unit: S.unit || 'kg' })
+    const routine = buildRoutine(resolved.rows, { date, unit: S.unit || 'kg' })
+    const customs = [...(S.customEx || []), ...resolved.customEx]
+    routine.name = sessionTitle(routine.ex, id => EXIDX[id]?.bp || customs.find(c => c.id === id)?.bp, date)
     update(s => { saveImportedSession(s, routine, { customEx: resolved.customEx, iso: date, deleteRoutine }) })
     toast(t('Session saved for {0}', fmtDate(date, true)))
     close()
@@ -138,7 +155,10 @@ function AnatolyImportSheet({ close }) {
       return <div key={i} className="anatoly-row" style={{ marginBottom: 12 }}>
         <div className="row between">
           <strong>{r.sourceText}</strong>
-          <span className={'tag' + (ok[i] ? '' : ' acc')}>{tag}</span>
+          <span>
+            {r.supersetGroup && <span className="tag" style={{ marginInlineEnd: 6 }}><Icon name="link" />{t('Superset')} {r.supersetGroup}</span>}
+            <span className={'tag' + (ok[i] ? '' : ' acc')}>{tag}</span>
+          </span>
         </div>
         <div className="small dim" style={{ margin: '2px 0 4px' }}>{rowSummary(r)}</div>
         <SelectRow icon="dumbbell" iconTint="var(--blue)" title={t('Exercise')} value={choice[i]}

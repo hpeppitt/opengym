@@ -54,12 +54,16 @@ session (for example a scrolled program view); treat them as one workout.
   written as "Max", "timeSeconds" is null too, and the original wording (for example
   "Time: Max") goes in "notes".
 - "notes" holds any other instruction shown for the exercise (tempo, rest, RPE), or null.
+- Exercises done back to back as a superset, circuit or giant set share a "supersetGroup": the
+  same short label for every exercise in the group (for example "A"), in the order shown. Look
+  for any visible link: a bracket or line joining them, a shared label such as A1/A2, or the
+  word "superset" or "circuit". An exercise on its own has "supersetGroup": null.
 
 ## JSON STRUCTURE (output only valid JSON, no markdown)
 {
   "imageReadable": boolean,
   "exercises": [
-    { "sourceText": string, "sets": number|null, "reps": number|null, "repsMax": number|null, "weight": number|null, "weightUnit": "kg"|"lb"|null, "timeSeconds": number|null, "notes": string|null }
+    { "sourceText": string, "sets": number|null, "reps": number|null, "repsMax": number|null, "weight": number|null, "weightUnit": "kg"|"lb"|null, "timeSeconds": number|null, "notes": string|null, "supersetGroup": string|null }
   ]
 }`
 }
@@ -101,11 +105,13 @@ const num = (v, { min = 0, exclusive = false } = {}) => {
 }
 const count = v => { const n = num(v, { exclusive: true }); return n === null ? null : Math.round(n) }
 const text = v => (typeof v === 'string' && v.trim() ? v.trim() : null)
+// A superset label as the model wrote it ("A", "a", 1), normalised; anything empty is no group.
+const group = v => (typeof v === 'number' && Number.isFinite(v) ? String(v) : typeof v === 'string' && v.trim() ? v.trim().toUpperCase() : null)
 const unit = v => { const u = typeof v === 'string' ? v.trim().toLowerCase() : ''; return u === 'kg' ? 'kg' : (u === 'lb' || u === 'lbs') ? 'lb' : null }
 
 /**
  * A model answer as rows: { sourceText, sets, reps, repsMax, targetWeight, weightUnit,
- * timeSeconds, notes }[]. Whole-answer failures throw with their own code: `truncated`,
+ * timeSeconds, notes, supersetGroup }[]. Whole-answer failures throw with their own code: `truncated`,
  * `no-json`, `unparseable`, `unreadable` (could not read the images), `structure`, and `empty`
  * (read the images, found no exercise).
  */
@@ -134,6 +140,7 @@ export function parseImportResponse(answer) {
       weightUnit: unit(ex?.weightUnit),
       timeSeconds: reps === null ? count(ex?.timeSeconds) : null,
       notes: text(ex?.notes),
+      supersetGroup: group(ex?.supersetGroup),
     })
   }
   if (!rows.length) throw new AnatolyImportError('empty', 'The images were read but showed no exercises.')
