@@ -103,9 +103,13 @@ Aggregate Steps, TotalCaloriesBurned, Nutrition; raw SleepSession, RestingHeartR
 ExerciseSession. Manifest `READ_*` permissions. Gate: values on device match Health Connect's own.
 
 ### OG-021 Pure scorers: `lib/sleep-score.js`, `lib/vo2max.js`
-status: ready
+status: done
 Port fit-app's `utils/sleepScore.ts` and the VO2 calculation with their tests. Gate: ported tests
 pass.
+Done: the sleep score is a straight port and its 9 tests are fit-app's, translated, including
+the reference-implementation property test. fit-app's VO2 maths lived inside
+`fetchCardioBasedVO2Max` beside the native reads and its tests covered only the reads, so the
+formula is lifted into a pure `estimateVo2Max()` and pinned by 9 new hand-worked tests.
 
 ### OG-022 Stats cards
 status: ready

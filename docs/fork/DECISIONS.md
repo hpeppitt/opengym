@@ -50,3 +50,7 @@ Dated, append-only. One entry per decision that changes direction.
   Plan header, where routines and the schedule live (Harry's call). Numbers the photo did not
   show take upstream's defaults, and the exercise note names them, because a routine cannot
   hold a null.
+- The VO2 max estimate is fit-app's arithmetic lifted out of its Health Connect read function
+  into a pure `estimateVo2Max()` that takes the readings as input (OG-021). fit-app's tests for
+  that function covered only the reads, so the formula got new tests worked by hand rather than
+  translated ones.
