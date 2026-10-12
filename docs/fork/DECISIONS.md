@@ -28,3 +28,7 @@ Dated, append-only. One entry per decision that changes direction.
   constant that is always on. A constant would have failed upstream's own updater tests unless
   the fork edited their test file too; the flag keeps the upstream touch to two lines in
   `lib/update.js`. The flag is set in `scripts/fork/build-android.sh` (OG-003).
+- The weekly upstream check reports in a rolling issue and runs the gate inside its own job
+  (OG-004). A PR opened or a branch pushed with the workflow token would not trigger
+  `test.yml`, and the fork does not allow Actions to open PRs; a personal token would fix both
+  but is a secret to rotate for no real gain. The issue carries a one-click link to open the PR.

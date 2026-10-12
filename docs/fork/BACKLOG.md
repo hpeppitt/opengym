@@ -25,15 +25,27 @@ install would fail, but the prompt is noise. Make the check a no-op when the bui
 Gate: unit test that the check resolves to "no update" under the flag.
 
 ### OG-004 Scheduled upstream sync check
-status: ready
+status: building
 depends on: OG-003
-A fork-only workflow (`.github/workflows/fork-upstream-sync.yml`), weekly cron plus manual
-dispatch: fetch `upstream/main`, attempt a merge on a throwaway branch, and on a clean merge push
-the branch and open a PR so upstream's `test.yml` runs the gate on it. On a conflict or a failing
-suite, open or update an issue listing the conflicting files and failing suites. Never touches
-`main`. Also disable or path-guard upstream's `mirror.yml` in the fork (it fails without GitLab
-credentials), and enable scheduled workflows once in the fork's Actions tab (GitHub disables them
-in forks by default and after 60 idle days). Gate: a manual dispatch opens a PR or an issue.
+`.github/workflows/fork-upstream-sync.yml`, weekly cron plus manual dispatch, runs
+`scripts/fork/upstream-sync.sh`: merge `upstream/main` on a throwaway branch, run `check.sh` and
+the frontend build on it, push `fork/upstream-sync` when the merge is clean, and report in one
+rolling issue labelled `upstream-sync` (closed again once the fork is current). Never touches
+`main`. Two changes from the first spec: the gate runs inside the job, because a push or PR made
+with the workflow token does not trigger `test.yml`; and the issue links a ready PR rather than
+opening one, because the fork does not let Actions create PRs. Upstream's `mirror.yml` already
+skips outside upstream's repo, so it needed no change. The script is verified locally against
+four probe refs (up to date, clean, conflict, failing test). Remaining gate: once merged, a
+manual dispatch opens the issue or reports up to date.
+
+### OG-005 Guard upstream's deploy workflows in the fork
+status: ready
+`pages.yml` and `docker-publish.yml` have no repository guard, so a push to the fork's `main`
+would try to deploy upstream's site to the fork's Pages and publish images to
+`ghcr.io/hpeppitt`. Add `if: github.repository == 'DuarteSantos8/openGym'` to their jobs, as
+`mirror.yml` does, a one-line `[upstream]` hook each. Also confirm Actions run in the fork at
+all: no run has appeared yet, which suggests the fork's Actions tab still needs enabling once.
+Gate: a push to `main` shows only the fork's own and upstream's test workflows running.
 
 ## Phase 1: Anatoly import (P0)
 
