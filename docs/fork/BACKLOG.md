@@ -126,14 +126,15 @@ current match. A pick counts as reviewing the row. No new strings. Gate: on the 
 pick an exercise for a row, and the saved routine uses it. Done 2026-10-12: Harry checked it.
 
 ### OG-025 Merge a custom exercise into another
-status: building
+status: done
 Harry: the Anatoly history import made custom exercises the library already has. The import was
 a one-off, so no matching is added to it; instead any custom exercise can be merged into another
 exercise. Settings, Bring data in, "Merge custom exercises" lists them, most logged first, with
 the closest library name; a custom exercise's detail sheet has the same action. Pick a suggestion
 or search the library, confirm, and its sets, routine slots and settings move over
 (`lib/merge-exercise.js`, see DECISIONS). Gate: on the phone, merge an imported exercise and see
-its history under the library exercise.
+its history under the library exercise. Done 2026-10-12: all 27 Anatoly custom exercises merged
+on the phone through the app's own screens at Harry's request; workouts, sets and volume unchanged.
 
 ## Phase 2: Health Connect stats
 
