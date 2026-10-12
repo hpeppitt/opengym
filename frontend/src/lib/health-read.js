@@ -101,8 +101,35 @@ export async function readStats({ days = 7, age, restingHrOverride = null, now =
   for (let i = days - 1; i >= 0; i--) {
     const date = localDate(now - i * DAY)
     const d = byDate.get(date) || {}
-    rows.push({ date, steps: d.steps ?? null, kcalBurned: d.kcalBurned ?? null, kcalEaten: d.kcalEaten ?? null, proteinG: d.proteinG ?? null, sleepScore: nights.get(date)?.sleepScore ?? null })
+    const n = nights.get(date)
+    rows.push({ date, steps: d.steps ?? null, kcalBurned: d.kcalBurned ?? null, kcalEaten: d.kcalEaten ?? null, proteinG: d.proteinG ?? null, sleepScore: n?.sleepScore ?? null, sleepMins: n?.sleepScore != null ? Math.round(n.totalSleepMins) : null })
   }
   const vo2 = resting === null ? null : vo2FromReadings({ age, resting, sessions: sessions || [], restingHrOverride })
   return { days: rows, vo2 }
+}
+
+const avg = xs => { const v = xs.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null }
+
+/**
+ * What the Home card shows, from readStats(): today's value per tile and the average of the
+ * earlier days that have one (today is still running, so it would drag the average down).
+ * Sleep is last night's, the night that ended today.
+ */
+export function summarizeStats(stats) {
+  const rows = stats?.days || []
+  const today = rows[rows.length - 1] || {}
+  const before = rows.slice(0, -1)
+  return {
+    sleep: { score: today.sleepScore ?? null, mins: today.sleepMins ?? null, avg: avg(before.map(r => r.sleepScore)) },
+    steps: { today: today.steps ?? null, avg: avg(before.map(r => r.steps)) },
+    calories: { burned: today.kcalBurned ?? null, eaten: today.kcalEaten ?? null, avg: avg(before.map(r => r.kcalBurned)) },
+    vo2: stats?.vo2 ?? null,
+  }
+}
+
+/** Age in whole years from a birth year, or null when there is none worth trusting. */
+export function ageFrom(birthYear, now = new Date()) {
+  const y = Number(birthYear)
+  const age = now.getFullYear() - y
+  return Number.isInteger(y) && age >= 10 && age <= 110 ? age : null
 }

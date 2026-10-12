@@ -68,3 +68,6 @@ Dated, append-only. One entry per decision that changes direction.
   the library with javap (OG-020). fit-app's numeric table is wrong for most entries; it lists 70
   as a stair machine when 70 is strength training, so gym sessions fed fit-app's VO2 max. Noted
   for Harry; fit-app is not changed from here.
+- The health stats live on Home as one card, hidden by a Settings switch beside the body
+  weight card's (Harry's call, OG-022). The birth year VO2 max needs is entered on the card and
+  kept in synced state; no health readings are stored, they are read from Health Connect each time.

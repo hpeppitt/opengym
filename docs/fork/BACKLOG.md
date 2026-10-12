@@ -140,10 +140,25 @@ the reference-implementation property test. fit-app's VO2 maths lived inside
 `fetchCardioBasedVO2Max` beside the native reads and its tests covered only the reads, so the
 formula is lifted into a pure `estimateVo2Max()` and pinned by 9 new hand-worked tests.
 
-### OG-022 Stats cards
-status: ready
+### OG-022 Health stats card on Home
+status: building
 depends on: OG-020, OG-021
-Sleep score, steps, calories, VO2 max on upstream's Stats view. Gate: run-and-verify on device.
+Sleep score, steps, calories, VO2 max. Harry's call: on Home, hidden by a switch in Settings →
+Look & Home → On Home like the body weight card (`S.showHealthCards`, read as on when absent).
+Built: `components/fork/HealthCards.jsx`, hooked into Home and Settings by one line each, phone
+and Android only. Tiles: last night's sleep score and length, today's steps and calories burned
+(or eaten, when logged), each with the earlier days' 7-day average; VO2 max once a birth year is
+entered on the card (`S.birthYear`). Connect button when nothing is granted, re-read when the app
+comes back to the foreground. Rendered on the phone 2026-10-12 with live Fitbit data.
+Remaining: Harry enters a birth year and checks VO2 max.
+
+### OG-023 Auto-tracked sessions: log and allocate
+status: ready
+depends on: OG-020
+Harry's request: exercise sessions Fitbit records on its own (Health Connect ExerciseSession)
+show up in openGym, and each can be allocated either to a strength workout already logged in
+openGym (attaching its time, heart rate and calories) or logged as a cardio workout. Design and
+gate to settle when picked up.
 
 ## Phase 3: Migrate and retire fit-app
 
