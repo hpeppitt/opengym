@@ -53,6 +53,13 @@ Gate: a push to `main` shows only the fork's own and upstream's test workflows r
 Done 2026-10-12: on the push of #5's merge, Pages, Docker publish and the mirror all skipped.
 Actions were already enabled. One Docker publish ran on #4's merge, before the guard landed.
 
+### OG-016 English only: no fork strings in the locale files
+status: done
+Harry's call: the fork needs no localisation. Fork strings stay in the code as `t()` keys and
+show in English (`t()` falls back to the key); every fork block is gone from the 18 locale files,
+which are now byte-identical to upstream's, so upstream's translation updates merge with no
+conflict. FORK.md's convention says so.
+
 ## Phase 1: Anatoly import (P0)
 
 ### OG-010 Gemini key in Settings, secure storage

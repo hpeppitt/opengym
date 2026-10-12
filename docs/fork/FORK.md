@@ -60,7 +60,9 @@ bash scripts/fork/upstream-sync.sh [ref] [report] # merge + gate dry run; use a 
 
 ## Conventions
 - Plain JavaScript, no TypeScript, no linter. Match the surrounding file.
-- New UI strings go into every locale in `frontend/src/locales/` (CI runs `check-locales.mjs`).
+- Fork UI strings are English only (Harry's call). Wrap them in `t()` as upstream does, but never
+  add them to `frontend/src/locales/`: `t()` falls back to the English key, and the locale files
+  stay byte-identical to upstream's, so upstream's constant translation updates merge cleanly.
 - Fork task ids are `OG-NNN` in `docs/fork/BACKLOG.md`.
 - Commits that touch upstream files say so in the subject (`[upstream]`), so a merge conflict
   later can be traced.
