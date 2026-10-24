@@ -16,7 +16,7 @@ import { matchRows, resolveRows } from '../../lib/anatoly-match.js'
 import { buildRoutine, mainMuscleGroups, saveImportedSession, staleImportedRoutines, tidyImportedRoutines } from '../../lib/anatoly-routine.js'
 import { useStore } from '../../store/useStore.js'
 import { useUI } from '../../store/useUI.js'
-import { Button, Row, SelectRow } from '../ui.jsx'
+import { Button, Row, SelectRow, Switch } from '../ui.jsx'
 import Icon from '../Icon.jsx'
 import { exercisePicker } from '../../sheets.jsx'
 import { toImage } from './anatoly-images.js'
@@ -92,6 +92,7 @@ function AnatolyImportSheet({ close }) {
   const [choice, setChoice] = useState([])      // per row: an exercise id, or CUSTOM
   const [ok, setOk] = useState([])              // per row: confirmed
   const [picked, setPicked] = useState({})      // row -> an exercise chosen from the full library
+  const [keep, setKeep] = useState(true)        // OG-017: keep the routine past its day
   const toast = msg => useUI.getState().toast(msg)
 
   const read = async () => {
@@ -130,7 +131,7 @@ function AnatolyImportSheet({ close }) {
     const routine = buildRoutine(resolved.rows, { date, unit: S.unit || 'kg' })
     const customs = [...(S.customEx || []), ...resolved.customEx]
     routine.name = sessionTitle(routine.ex, id => EXIDX[id]?.bp || customs.find(c => c.id === id)?.bp, date)
-    update(s => { saveImportedSession(s, routine, { customEx: resolved.customEx, iso: date, deleteRoutine }) })
+    update(s => { saveImportedSession(s, routine, { customEx: resolved.customEx, iso: date, deleteRoutine, keep }) })
     toast(t('Session saved for {0}', fmtDate(date, true)))
     close()
   }
@@ -188,6 +189,12 @@ function AnatolyImportSheet({ close }) {
       </div>
     })}
     {toCheck > 0 && <div className="small dim" style={{ margin: '4px 0 10px' }}>{t('Rows to check: {0}', toCheck)}</div>}
+    {/* OG-017: on, the routine stays in the library; off, it goes once its day has passed. */}
+    <Row icon="star" iconTint="var(--purple)" title={t('Keep in routines')}
+      subtitle={keep ? null : t('Removed once its day has passed')}>
+      <Switch checked={keep} onChange={setKeep} aria-label={t('Keep in routines')} />
+    </Row>
+    <div style={{ height: 12 }} />
     <Button variant="primary" onClick={save} disabled={toCheck > 0}>{t('Save session')}</Button>
     <div style={{ height: 8 }} />
     <Button variant="ghost" className="dim" onClick={() => setRows(null)}>{t('Back')}</Button>
