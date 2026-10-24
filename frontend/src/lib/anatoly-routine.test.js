@@ -114,6 +114,18 @@ describe('saving and tidying imported sessions (one per day, gone once the day h
     expect(s.dayPlan).toEqual({ '2026-10-12': 'today', '2026-10-13': 'later' })
   })
 
+  it('a kept routine (OG-017) is never tidied or replaced, and stays pinned to its day', () => {
+    const s = state()
+    saveImportedSession(s, routine('kept'), { iso: '2026-10-11', deleteRoutine, keep: true })
+    saveImportedSession(s, routine('oneoff'), { iso: '2026-10-11', deleteRoutine })
+    expect(s.routines.map(r => r.id)).toEqual(['mine', 'kept', 'oneoff'])
+    expect(s.routines.find(r => r.id === 'kept').anatoly).toEqual({ date: '2026-10-11', keep: true })
+    expect(s.routines.find(r => r.id === 'oneoff').anatoly).toEqual({ date: '2026-10-11' })
+    expect(staleImportedRoutines(s, '2026-10-12')).toEqual(['oneoff'])
+    expect(tidyImportedRoutines(s, '2026-10-12', deleteRoutine)).toBe(1)
+    expect(s.routines.map(r => r.id)).toEqual(['mine', 'kept'])
+  })
+
   it('never removes a routine a running workout uses, past or replaced', () => {
     const s = state()
     saveImportedSession(s, routine('old'), { iso: '2026-10-11', deleteRoutine })

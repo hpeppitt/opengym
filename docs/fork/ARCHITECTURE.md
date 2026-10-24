@@ -36,7 +36,8 @@ photos  ->  lib/anatoly-import.js  ->  Gemini vision (pinned model, key from sec
         ->  lib/anatoly-match.js   ->  upstream matchExercise() + fuzzy score
         ->  exact | fuzzy | unmatched per row, user confirms fuzzy and unmatched
         ->  lib/anatoly-routine.js: one routine per date (anatoly: { date }), pinned via S.dayPlan[iso]
-        ->  removed when Plan opens after that date; the logged workout stays in History
+        ->  removed when Plan opens after that date, unless saved with "Keep in routines"
+            (anatoly.keep, OG-017, on by default); the logged workout stays in History
 ```
 
 - The exercise library is 5,600 entries, too many for the prompt. Gemini returns names; matching

@@ -90,8 +90,9 @@ export function mainMuscleGroups(ex, bpOf) {
 
 // Routines this import made carry `anatoly: { date }`. One per date: importing the same day
 // again replaces it. Once its day has passed it is removed (Harry's choice, OG-013); the workout
-// logged from it stays in History, which keeps its own copy of every set.
-const isImported = r => !!(r && r.anatoly && r.anatoly.date)
+// logged from it stays in History, which keeps its own copy of every set. A routine saved with
+// "Keep in routines" (`anatoly.keep`, OG-017) is library material: never replaced, never tidied.
+const isImported = r => !!(r && r.anatoly && r.anatoly.date) && !r.anatoly.keep
 const activeIds = s => new Set([].concat(s.active?.routineIds ?? (s.active?.routineId ? [s.active.routineId] : [])))
 
 /**
@@ -99,14 +100,14 @@ const activeIds = s => new Set([].concat(s.active?.routineIds ?? (s.active?.rout
  * an earlier import made for the same date, add the routine, and pin it to `iso` via dayPlan.
  * `deleteRoutine` is upstream's, so a replaced routine leaves no pointer behind.
  */
-export function saveImportedSession(s, routine, { customEx = [], iso, deleteRoutine }) {
+export function saveImportedSession(s, routine, { customEx = [], iso, deleteRoutine, keep = false }) {
   s.customEx = s.customEx || []
   s.routines = s.routines || []
   s.dayPlan = s.dayPlan || {}
   for (const c of customEx) if (!s.customEx.some(x => x.id === c.id)) s.customEx.push(c)
   const live = activeIds(s)
   for (const r of s.routines.filter(r => isImported(r) && r.anatoly.date === iso && !live.has(r.id))) deleteRoutine(s, r.id)
-  s.routines.push({ ...routine, anatoly: { ...(routine.anatoly || {}), date: iso } })
+  s.routines.push({ ...routine, anatoly: { ...(routine.anatoly || {}), date: iso, ...(keep ? { keep: true } : {}) } })
   s.dayPlan[iso] = routine.id
   return routine.id
 }

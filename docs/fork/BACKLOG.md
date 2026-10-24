@@ -125,6 +125,16 @@ equipment filters, "Create your own exercise"), opened on what trains the same m
 current match. A pick counts as reviewing the row. No new strings. Gate: on the phone, search and
 pick an exercise for a row, and the saved routine uses it. Done 2026-10-12: Harry checked it.
 
+### OG-017 Import: keep the routine in the library
+status: in review
+depends on: OG-013
+Harry's feedback 2026-10-24: imported routines vanished after a few days, and he expected them to
+stay. That was OG-013's tidy-up. The review screen now has a "Keep in routines" switch, on by
+default. A kept routine (`anatoly.keep`) is never tidied and never replaced by a later import for
+the same day. Switched off, the session behaves as before and goes once its day has passed. No
+migration: routines already tidied are gone. Gate: on the phone, import with the switch on, and
+the routine is still in the list after its day has passed.
+
 ### OG-025 Merge a custom exercise into another
 status: done
 Harry: the Anatoly history import made custom exercises the library already has. The import was

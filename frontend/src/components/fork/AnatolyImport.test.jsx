@@ -113,6 +113,27 @@ describe('Anatoly import sheet (OG-013)', () => {
     expect(host.textContent.match(/Superset A/g)).toHaveLength(2)
   })
 
+  it('keeps the routine in the library by default, and saves a one-off when switched off (OG-017)', async () => {
+    importFromImages.mockResolvedValue(ROWS.slice(0, 1))
+    await openSheet()
+    await pickPhotos()
+    await click(button('Read photos'))
+    await flush()
+    expect(button('Keep in routines').getAttribute('aria-checked')).toBe('true')
+    await click(button('Save session'))
+    expect(mocks.S.routines.find(r => r.anatoly).anatoly.keep).toBe(true)
+
+    mocks.S.routines = mocks.S.routines.filter(r => !r.anatoly)
+    await openSheet()
+    await pickPhotos()
+    await click(button('Read photos'))
+    await flush()
+    await click(button('Keep in routines'))
+    expect(host.textContent).toContain('Removed once its day has passed')
+    await click(button('Save session'))
+    expect(mocks.S.routines.find(r => r.anatoly).anatoly.keep).toBeUndefined()
+  })
+
   it('searches the whole library for a match, beyond the three suggestions', async () => {
     importFromImages.mockResolvedValue(ROWS)
     await openSheet()
