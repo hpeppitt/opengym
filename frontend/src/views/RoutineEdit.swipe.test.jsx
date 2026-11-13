@@ -56,6 +56,9 @@ const undo = () => act(() => useUI.getState().runToastAction())
 
 beforeEach(() => {
   vi.useFakeTimers()
+  // Newer happy-dom (seen from 20.14.6) ships element.animate() on its own real timer, which fake timers cannot
+  // advance. Without it the row takes the no-animation path, as it did on older happy-dom.
+  Element.prototype.animate = undefined
   Object.values(sheets).forEach(mock => mock.mockReset())
   document.documentElement.dir = 'ltr'
   useUI.setState({ sheets: [], toastMsg: '', toastAction: null })
