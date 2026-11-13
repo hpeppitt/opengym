@@ -1,3 +1,10 @@
+## Project profile
+- type: engineering
+- extensions: none
+- run: docker compose up -d --build
+- check: (cd frontend && npm test) && (cd api && npm test) && (cd mcp && npm test)
+- docs: docs/
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
