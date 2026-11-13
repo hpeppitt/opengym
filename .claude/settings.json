@@ -1,7 +1,7 @@
 {
   "enabledPlugins": {
-    "core@herry-kit": true,
-    "engineering@herry-kit": true
+    "core@project-marketplace": true,
+    "engineering@project-marketplace": true
   },
   "permissions": { "allow": [] }
 }
