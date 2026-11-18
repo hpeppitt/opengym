@@ -61,6 +61,9 @@ function swipe(target, x0, x1, { dy = 0, pointerType = 'touch', clickAfter = tru
 
 beforeEach(() => {
   vi.useFakeTimers()
+  // Newer happy-dom (seen from 20.14.6) ships element.animate() on its own real timer, which fake timers cannot
+  // advance. Without it the row takes the no-animation path, as it did on older happy-dom.
+  Element.prototype.animate = undefined
   localStorage.clear()
   document.documentElement.dir = 'ltr'
   useUI.getState().stopRest()
