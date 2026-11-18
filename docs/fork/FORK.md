@@ -18,7 +18,7 @@ import is the architecture record and stays true; this file is what the fork add
 ## Layout
 Upstream's layout holds (see `CONTRIBUTING.md`). The fork adds:
 
-- `docs/fork/`: this file, `DECISIONS.md`, `ARCHITECTURE.md`, `BACKLOG.md`. Nothing of the fork's
+- `docs/fork/`: this file, `DECISIONS.md`, `ARCHITECTURE.md`, `BACKLOG.md` (a pointer to the fleet board). Nothing of the fork's
   goes in upstream's `docs/`.
 - `scripts/fork/`: the fork's own scripts (`check.sh`). Upstream's `scripts/` is theirs.
 - `frontend/android/app/fork.gradle`: the fork's application id, applied from the last line of
@@ -63,11 +63,11 @@ bash scripts/fork/upstream-sync.sh [ref] [report] # merge + gate dry run; use a 
 - Fork UI strings are English only (Harry's call). Wrap them in `t()` as upstream does, but never
   add them to `frontend/src/locales/`: `t()` falls back to the English key, and the locale files
   stay byte-identical to upstream's, so upstream's constant translation updates merge cleanly.
-- Fork task ids are `OG-NNN` in `docs/fork/BACKLOG.md`.
+- Fork task ids are `OG-NNN`, kept in the title of the fleet board ticket (project `opengym`).
 - Commits that touch upstream files say so in the subject (`[upstream]`), so a merge conflict
   later can be traced.
 
 ## Living docs
 - `docs/fork/DECISIONS.md`: dated, append-only. Anything that changes direction gets an entry.
 - `docs/fork/ARCHITECTURE.md`: the seams the fork adds. Update when a boundary moves.
-- `docs/fork/BACKLOG.md`: the phased plan and task list.
+- `docs/fork/BACKLOG.md`: a pointer. Open work is on the fleet board, project `opengym`.
